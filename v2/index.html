@@ -1,0 +1,1646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Hiro — Financial Dashboard</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg-primary: #0a0a0f;
+    --bg-secondary: #12121a;
+    --bg-card: #16161f;
+    --bg-card-hover: #1c1c28;
+    --bg-elevated: #1e1e2a;
+    --bg-input: #1a1a26;
+    --border: rgba(255,255,255,0.06);
+    --border-active: rgba(255,255,255,0.12);
+    --text-primary: #f0f0f5;
+    --text-secondary: #8888a0;
+    --text-tertiary: #55556a;
+    --accent-blue: #4a9eff;
+    --accent-green: #34d399;
+    --accent-red: #f87171;
+    --accent-amber: #fbbf24;
+    --accent-purple: #a78bfa;
+    --accent-cyan: #22d3ee;
+    --glow-blue: rgba(74,158,255,0.15);
+    --glow-green: rgba(52,211,153,0.12);
+    --glow-purple: rgba(167,139,250,0.12);
+    --radius: 16px;
+    --radius-sm: 12px;
+    --radius-xs: 8px;
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    height: 100%;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    max-width: 430px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  /* ── Scrollable area ── */
+  .app-container {
+    height: 100vh;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .scroll-area {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    padding-bottom: 16px;
+  }
+
+  .scroll-area::-webkit-scrollbar { display: none; }
+
+  /* ── Header ── */
+  .header {
+    padding: 52px 20px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 10;
+  }
+
+  .header-left h1 {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #f0f0f5 0%, #8888a0 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .header-left .greeting {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+    font-weight: 400;
+  }
+
+  .header-right {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .header-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .header-btn:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--border-active);
+  }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent-green);
+    animation: pulse-dot 2s ease-in-out infinite;
+    box-shadow: 0 0 8px var(--accent-green);
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(0.85); }
+  }
+
+  /* ── Widget Grid ── */
+  .widget-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 8px 16px;
+  }
+
+  .widget {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    min-height: 100px;
+  }
+
+  .widget::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+  }
+
+  .widget:active {
+    transform: scale(0.97);
+    background: var(--bg-card-hover);
+    border-color: var(--border-active);
+  }
+
+  .widget-wide {
+    grid-column: span 2;
+  }
+
+  .widget-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+
+  .widget-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 4px;
+  }
+
+  .widget-value {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .widget-sub {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-top: 3px;
+    font-weight: 400;
+  }
+
+  /* ── Portfolio widget ── */
+  .widget-portfolio .widget-icon { background: rgba(74,158,255,0.12); color: var(--accent-blue); }
+  .widget-portfolio .widget-value { color: var(--text-primary); }
+  .widget-portfolio .change-up { color: var(--accent-green); font-size: 13px; font-weight: 600; }
+  .widget-portfolio .change-down { color: var(--accent-red); font-size: 13px; font-weight: 600; }
+  .widget-portfolio .sparkline-container { margin-top: 8px; height: 32px; }
+  .widget-portfolio .holdings-mini {
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .widget-portfolio .holding-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .widget-portfolio .holding-row .ticker {
+    color: var(--text-secondary);
+    font-weight: 500;
+    min-width: 36px;
+  }
+
+  /* ── Net Worth widget ── */
+  .widget-networth .widget-icon { background: rgba(52,211,153,0.12); color: var(--accent-green); }
+  .widget-networth .nw-bar-container {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .widget-networth .nw-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .widget-networth .nw-bar-label {
+    min-width: 28px;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .widget-networth .nw-bar-track {
+    flex: 1;
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.04);
+    overflow: hidden;
+  }
+  .widget-networth .nw-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.6s ease;
+  }
+  .widget-networth .nw-bar-val {
+    min-width: 44px;
+    text-align: right;
+    color: var(--text-secondary);
+    font-size: 10px;
+  }
+
+  /* ── Financial Tasks widget ── */
+  .widget-tasks .widget-icon { background: rgba(251,191,36,0.12); color: var(--accent-amber); }
+  .widget-tasks .task-list {
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .widget-tasks .task-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    line-height: 1.3;
+  }
+  .widget-tasks .task-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .widget-tasks .task-text {
+    flex: 1;
+    color: var(--text-secondary);
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .widget-tasks .task-due {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    flex-shrink: 0;
+  }
+
+  /* ── Cash Flow widget ── */
+  .widget-cashflow .widget-icon { background: rgba(167,139,250,0.12); color: var(--accent-purple); }
+  .widget-cashflow .cf-bars {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .widget-cashflow .cf-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .widget-cashflow .cf-label {
+    min-width: 16px;
+    color: var(--text-tertiary);
+    font-size: 12px;
+  }
+  .widget-cashflow .cf-track {
+    flex: 1;
+    height: 8px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.04);
+    overflow: hidden;
+  }
+  .widget-cashflow .cf-fill {
+    height: 100%;
+    border-radius: 4px;
+  }
+  .widget-cashflow .cf-val {
+    min-width: 38px;
+    text-align: right;
+    color: var(--text-secondary);
+    font-size: 11px;
+  }
+  .widget-cashflow .cf-surplus {
+    margin-top: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* ── Watchlist widget ── */
+  .widget-watchlist .widget-icon { background: rgba(34,211,238,0.12); color: var(--accent-cyan); }
+  .widget-watchlist .watch-list {
+    margin-top: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .widget-watchlist .watch-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .widget-watchlist .watch-ticker {
+    font-weight: 600;
+    color: var(--text-primary);
+    min-width: 36px;
+  }
+  .widget-watchlist .watch-price {
+    color: var(--text-secondary);
+  }
+
+  /* ── Recent Transactions widget ── */
+  .widget-transactions .widget-icon { background: rgba(248,113,113,0.12); color: var(--accent-red); }
+  .widget-transactions .txn-list {
+    margin-top: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .widget-transactions .txn-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+  }
+  .widget-transactions .txn-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    flex-shrink: 0;
+    background: rgba(255,255,255,0.04);
+  }
+  .widget-transactions .txn-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .widget-transactions .txn-name {
+    color: var(--text-primary);
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .widget-transactions .txn-cat {
+    color: var(--text-tertiary);
+    font-size: 10px;
+  }
+  .widget-transactions .txn-amount {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  /* Mini sparkline canvas */
+  .sparkline-canvas {
+    width: 100%;
+    height: 32px;
+  }
+
+  /* ── Chat Section ── */
+  .chat-section {
+    padding: 0 16px;
+  }
+
+  .chat-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 4px 12px;
+  }
+
+  .chat-divider::before,
+  .chat-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .chat-divider span {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .chat-messages {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-bottom: 8px;
+  }
+
+  /* Chat bubbles */
+  .chat-msg {
+    max-width: 88%;
+    animation: msg-in 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes msg-in {
+    from { opacity: 0; transform: translateY(12px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .chat-msg.user {
+    align-self: flex-end;
+  }
+
+  .chat-msg.user .bubble {
+    background: var(--accent-blue);
+    color: white;
+    border-radius: var(--radius) var(--radius) 4px var(--radius);
+    padding: 10px 14px;
+    font-size: 14px;
+    line-height: 1.45;
+  }
+
+  .chat-msg.agent {
+    align-self: flex-start;
+  }
+
+  .chat-msg.agent .bubble {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius) var(--radius) var(--radius) 4px;
+    padding: 12px 14px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text-primary);
+  }
+
+  .chat-msg .agent-label {
+    font-size: 11px;
+    color: var(--accent-blue);
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .chat-msg .agent-label::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent-blue);
+    display: inline-block;
+  }
+
+  /* ── Embedded UI Cards ── */
+  .card-embed {
+    margin-top: 10px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+  }
+
+  /* Stock chart card */
+  .stock-card-header {
+    padding: 12px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .stock-ticker {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 15px;
+  }
+
+  .stock-price {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: var(--accent-green);
+    font-weight: 600;
+  }
+
+  .stock-chart-area {
+    padding: 8px 14px 14px;
+    height: 100px;
+    position: relative;
+  }
+
+  .stock-chart-canvas {
+    width: 100%;
+    height: 100%;
+  }
+
+  .stock-meta {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 14px 10px;
+    font-size: 11px;
+    color: var(--text-tertiary);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Net worth card */
+  .nw-card {
+    padding: 14px;
+  }
+  .nw-card-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .nw-card-row:last-child { border-bottom: none; font-weight: 700; }
+  .nw-card-row .nw-label { color: var(--text-secondary); }
+  .nw-card-row .nw-val { font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+
+  /* Tasks card */
+  .tasks-card {
+    padding: 14px;
+  }
+  .tasks-card-item {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .tasks-card-item:last-child { border-bottom: none; }
+  .tasks-card-urgency {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    margin-top: 6px;
+    flex-shrink: 0;
+  }
+  .tasks-card-info { flex: 1; }
+  .tasks-card-info h4 { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+  .tasks-card-info p { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+  .tasks-card-due {
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-tertiary);
+    flex-shrink: 0;
+  }
+
+  /* Cash flow card */
+  .cf-card {
+    padding: 14px;
+  }
+  .cf-card-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .cf-card-row:last-child { border-bottom: none; }
+  .cf-card-label { color: var(--text-secondary); }
+  .cf-card-val { font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+
+  /* Watchlist card */
+  .watchlist-card {
+    padding: 6px 14px;
+  }
+  .watchlist-card-item {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .watchlist-card-item:last-child { border-bottom: none; }
+  .watchlist-card-ticker {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 14px;
+    min-width: 50px;
+  }
+  .watchlist-card-name {
+    flex: 1;
+    font-size: 12px;
+    color: var(--text-secondary);
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .watchlist-card-price {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    text-align: right;
+  }
+  .watchlist-card-change {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    min-width: 52px;
+    text-align: right;
+  }
+
+  /* Transactions card */
+  .txn-card {
+    padding: 6px 14px;
+  }
+  .txn-card-item {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .txn-card-item:last-child { border-bottom: none; }
+  .txn-card-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+    background: rgba(255,255,255,0.04);
+  }
+  .txn-card-info { flex: 1; min-width: 0; }
+  .txn-card-info h4 { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+  .txn-card-info p { font-size: 12px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .txn-card-amount {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  /* ── Typing indicator ── */
+  .typing-indicator {
+    display: flex;
+    gap: 4px;
+    padding: 8px 0;
+    align-items: center;
+  }
+
+  .typing-indicator .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--text-tertiary);
+    animation: typing-bounce 1.4s ease-in-out infinite;
+  }
+
+  .typing-indicator .dot:nth-child(2) { animation-delay: 0.2s; }
+  .typing-indicator .dot:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes typing-bounce {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+    30% { transform: translateY(-6px); opacity: 1; }
+  }
+
+  /* ── Sticky Input Bar ── */
+  .input-bar {
+    padding: 8px 16px;
+    padding-bottom: calc(12px + var(--safe-bottom));
+    background: var(--bg-primary);
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .input-bar::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    left: 0;
+    right: 0;
+    height: 20px;
+    background: linear-gradient(to top, var(--bg-primary), transparent);
+    pointer-events: none;
+  }
+
+  .input-field {
+    flex: 1;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    padding: 10px 16px;
+    color: var(--text-primary);
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .input-field:focus {
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 3px var(--glow-blue);
+  }
+
+  .input-field::placeholder {
+    color: var(--text-tertiary);
+  }
+
+  .send-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--accent-blue);
+    border: none;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+
+  .send-btn:active {
+    transform: scale(0.92);
+  }
+
+  .send-btn:disabled {
+    background: var(--bg-card);
+    color: var(--text-tertiary);
+    cursor: default;
+  }
+
+  .send-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* ── Ambient background effects ── */
+  .ambient-glow {
+    position: fixed;
+    top: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(74,158,255,0.06) 0%, transparent 70%);
+    pointer-events: none;
+    animation: ambient-drift 8s ease-in-out infinite;
+    z-index: 0;
+  }
+
+  @keyframes ambient-drift {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    33% { transform: translateX(-40%) translateY(20px); }
+    66% { transform: translateX(-60%) translateY(-10px); }
+  }
+
+  /* Quick action chips */
+  .quick-chips {
+    display: flex;
+    gap: 8px;
+    padding: 4px 16px 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .quick-chips::-webkit-scrollbar { display: none; }
+
+  .chip {
+    padding: 6px 14px;
+    border-radius: 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .chip:active {
+    background: var(--bg-card-hover);
+    border-color: var(--accent-blue);
+    color: var(--accent-blue);
+    transform: scale(0.96);
+  }
+
+  /* ── Live clock ── */
+  .live-clock {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-tertiary);
+    font-weight: 400;
+  }
+</style>
+</head>
+<body>
+
+<div class="ambient-glow"></div>
+
+<div class="app-container">
+  <div class="scroll-area" id="scrollArea">
+
+    <!-- Header -->
+    <div class="header">
+      <div class="header-left">
+        <h1>Hiro</h1>
+        <div class="greeting" id="greeting">Good morning, Jane</div>
+      </div>
+      <div class="header-right">
+        <span class="live-clock" id="liveClock"></span>
+        <div class="status-dot"></div>
+        <div class="header-btn" onclick="handleCommand('settings')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.32 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Widget Grid -->
+    <div class="widget-grid">
+
+      <!-- Portfolio Widget -->
+      <div class="widget widget-portfolio" onclick="triggerWidget('portfolio')">
+        <div class="widget-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+        </div>
+        <div class="widget-label">Portfolio</div>
+        <div class="widget-value">$127.4K</div>
+        <div class="widget-sub"><span class="change-up">+1.8%</span> today</div>
+        <div class="sparkline-container">
+          <canvas class="sparkline-canvas" id="sparkPortfolio"></canvas>
+        </div>
+        <div class="holdings-mini" id="holdingsMini"></div>
+      </div>
+
+      <!-- Net Worth Widget -->
+      <div class="widget widget-networth" onclick="triggerWidget('networth')">
+        <div class="widget-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 10h20"/><path d="M12 4v16"/></svg>
+        </div>
+        <div class="widget-label">Net Worth</div>
+        <div class="widget-value" style="font-size:18px;color:var(--accent-green)">$341K</div>
+        <div class="nw-bar-container">
+          <div class="nw-bar-row">
+            <span class="nw-bar-label">Ast</span>
+            <div class="nw-bar-track"><div class="nw-bar-fill" style="width:85%;background:var(--accent-green)"></div></div>
+            <span class="nw-bar-val">$478K</span>
+          </div>
+          <div class="nw-bar-row">
+            <span class="nw-bar-label">Dbt</span>
+            <div class="nw-bar-track"><div class="nw-bar-fill" style="width:29%;background:var(--accent-red)"></div></div>
+            <span class="nw-bar-val">$137K</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Financial Tasks Widget -->
+      <div class="widget widget-tasks" onclick="triggerWidget('tasks')">
+        <div class="widget-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        </div>
+        <div class="widget-label">Action Items</div>
+        <div class="widget-sub" style="color:var(--accent-amber);font-weight:600;font-size:12px">4 pending</div>
+        <div class="task-list" id="taskList"></div>
+      </div>
+
+      <!-- Cash Flow Widget -->
+      <div class="widget widget-cashflow" onclick="triggerWidget('cashflow')">
+        <div class="widget-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <div class="widget-label">Cash Flow</div>
+        <div class="widget-sub" style="font-size:12px;color:var(--text-primary);font-weight:600">February</div>
+        <div class="cf-bars">
+          <div class="cf-row">
+            <span class="cf-label" style="color:var(--accent-green)">&#9650;</span>
+            <div class="cf-track"><div class="cf-fill" style="width:100%;background:var(--accent-green)"></div></div>
+            <span class="cf-val">$8.2K</span>
+          </div>
+          <div class="cf-row">
+            <span class="cf-label" style="color:var(--accent-red)">&#9660;</span>
+            <div class="cf-track"><div class="cf-fill" style="width:71%;background:var(--accent-red)"></div></div>
+            <span class="cf-val">$5.8K</span>
+          </div>
+        </div>
+        <div class="cf-surplus" style="color:var(--accent-green)">
+          <span>+$2,380</span>
+          <span style="color:var(--text-tertiary);font-weight:400;font-size:10px">surplus</span>
+        </div>
+      </div>
+
+      <!-- Watchlist Widget -->
+      <div class="widget widget-watchlist" onclick="triggerWidget('watchlist')">
+        <div class="widget-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </div>
+        <div class="widget-label">Watchlist</div>
+        <div class="watch-list" id="watchList"></div>
+      </div>
+
+      <!-- Recent Transactions Widget -->
+      <div class="widget widget-transactions" onclick="triggerWidget('transactions')">
+        <div class="widget-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        </div>
+        <div class="widget-label">Recent</div>
+        <div class="txn-list" id="txnList"></div>
+      </div>
+
+    </div>
+
+    <!-- Quick Action Chips -->
+    <div class="quick-chips">
+      <div class="chip" onclick="handleChip('Show my portfolio')">Show my portfolio</div>
+      <div class="chip" onclick="handleChip('Upcoming bills')">Upcoming bills</div>
+      <div class="chip" onclick="handleChip('Track a stock')">Track a stock</div>
+      <div class="chip" onclick="handleChip('Monthly summary')">Monthly summary</div>
+    </div>
+
+    <!-- Chat Section -->
+    <div class="chat-section">
+      <div class="chat-divider"><span>Conversation</span></div>
+      <div class="chat-messages" id="chatMessages">
+        <!-- Messages injected here -->
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Sticky Input Bar -->
+  <div class="input-bar">
+    <input
+      class="input-field"
+      id="chatInput"
+      type="text"
+      placeholder="Ask Hiro anything..."
+      autocomplete="off"
+    />
+    <button class="send-btn" id="sendBtn" onclick="sendMessage()" disabled>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+// ── Sample Financial Data ──
+const DATA = {
+  portfolio: {
+    total: 127384.52,
+    change: +1.8,
+    holdings: [
+      { ticker: 'VOO', name: 'Vanguard S&P 500', price: 482.17, change: +1.2, shares: 85, value: 40984.45 },
+      { ticker: 'NVDA', name: 'NVIDIA Corp', price: 892.34, change: +4.2, shares: 32, value: 28554.88 },
+      { ticker: 'AAPL', name: 'Apple Inc', price: 189.72, change: +0.8, shares: 65, value: 12331.80 },
+      { ticker: 'BND', name: 'Vanguard Total Bond', price: 72.45, change: -0.1, shares: 120, value: 8694.00 },
+    ],
+    sparkline: [118,120,119,122,121,123,122,124,123,125,124,126,125,127,126,125,127,128,126,129,128,127,126,127]
+  },
+  netWorth: {
+    total: 341200,
+    assets: {
+      investments: 127384,
+      retirement: 198500,
+      savings: 42300,
+      checking: 8750,
+      property: 0,
+      crypto: 4200,
+      other: 97000,
+    },
+    liabilities: {
+      mortgage: 0,
+      studentLoans: 28400,
+      autoLoan: 12600,
+      creditCards: 2180,
+      other: 94100,
+    },
+    totalAssets: 478134,
+    totalLiabilities: 137280,
+  },
+  tasks: [
+    { text: 'Pay credit card statement', due: 'Mar 1', urgency: 'high', icon: '!' },
+    { text: 'Review 401(k) allocation', due: 'Mar 5', urgency: 'medium', icon: '\u21BB' },
+    { text: 'File quarterly estimated tax', due: 'Mar 15', urgency: 'high', icon: '\u26A0' },
+    { text: 'Renew umbrella insurance', due: 'Mar 22', urgency: 'low', icon: '\u2713' },
+  ],
+  cashFlow: {
+    month: 'February',
+    income: 8200,
+    spending: 5820,
+    surplus: 2380,
+    categories: [
+      { name: 'Housing', amount: 1850, pct: 32 },
+      { name: 'Food & Dining', amount: 920, pct: 16 },
+      { name: 'Transportation', amount: 480, pct: 8 },
+      { name: 'Subscriptions', amount: 185, pct: 3 },
+      { name: 'Shopping', amount: 640, pct: 11 },
+      { name: 'Utilities', amount: 310, pct: 5 },
+      { name: 'Other', amount: 1435, pct: 25 },
+    ],
+  },
+  watchlist: [
+    { ticker: 'MSFT', name: 'Microsoft', price: 412.56, change: +1.1 },
+    { ticker: 'AMZN', name: 'Amazon', price: 178.92, change: +2.3 },
+    { ticker: 'TSLA', name: 'Tesla', price: 248.91, change: -1.3 },
+    { ticker: 'BTC', name: 'Bitcoin', price: 62480, change: +3.7 },
+  ],
+  transactions: [
+    { merchant: 'Whole Foods', amount: -67.42, category: 'Groceries', icon: '\uD83D\uDED2', date: 'Today', color: '#34d399' },
+    { merchant: 'Spotify', amount: -10.99, category: 'Subscription', icon: '\uD83C\uDFB5', date: 'Yesterday', color: '#a78bfa' },
+    { merchant: 'Shell Gas', amount: -48.30, category: 'Transportation', icon: '\u26FD', date: 'Yesterday', color: '#fbbf24' },
+    { merchant: 'Payroll Deposit', amount: +4100.00, category: 'Income', icon: '\uD83D\uDCB0', date: 'Feb 15', color: '#4a9eff' },
+  ],
+};
+
+// ── Helpers ──
+function getGreeting() {
+  const h = new Date().getHours();
+  if (h < 12) return 'Good morning, Jane';
+  if (h < 17) return 'Good afternoon, Jane';
+  return 'Good evening, Jane';
+}
+
+function updateClock() {
+  const now = new Date();
+  const t = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+  document.getElementById('liveClock').textContent = t;
+}
+
+function scrollToBottom() {
+  const area = document.getElementById('scrollArea');
+  requestAnimationFrame(() => {
+    area.scrollTo({ top: area.scrollHeight, behavior: 'smooth' });
+  });
+}
+
+function fmtMoney(n, compact) {
+  if (compact && Math.abs(n) >= 1000) {
+    return '$' + (n / 1000).toFixed(1) + 'K';
+  }
+  return (n < 0 ? '-' : '') + '$' + Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+// ── Sparkline renderer ──
+function drawSparkline(canvasId, data, color = '#4a9eff') {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  ctx.scale(dpr, dpr);
+
+  const w = rect.width;
+  const h = rect.height;
+  const min = Math.min(...data);
+  const max = Math.max(...data);
+  const range = max - min || 1;
+  const step = w / (data.length - 1);
+
+  const gradient = ctx.createLinearGradient(0, 0, 0, h);
+  gradient.addColorStop(0, color + '30');
+  gradient.addColorStop(1, 'transparent');
+
+  ctx.beginPath();
+  ctx.moveTo(0, h - ((data[0] - min) / range) * h * 0.85);
+  for (let i = 1; i < data.length; i++) {
+    const x = i * step;
+    const y = h - ((data[i] - min) / range) * h * 0.85;
+    const xc = (x + (i - 1) * step) / 2;
+    const yp = h - ((data[i - 1] - min) / range) * h * 0.85;
+    ctx.quadraticCurveTo((i - 1) * step, yp, xc, (yp + y) / 2);
+  }
+  const lastX = (data.length - 1) * step;
+  const lastY = h - ((data[data.length - 1] - min) / range) * h * 0.85;
+  ctx.lineTo(lastX, lastY);
+
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  ctx.lineTo(lastX, h);
+  ctx.lineTo(0, h);
+  ctx.closePath();
+  ctx.fillStyle = gradient;
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.arc(lastX, lastY, 3, 0, Math.PI * 2);
+  ctx.fillStyle = color;
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(lastX, lastY, 6, 0, Math.PI * 2);
+  ctx.fillStyle = color + '30';
+  ctx.fill();
+}
+
+// ── Populate widgets with data ──
+function populateWidgets() {
+  // Holdings mini in portfolio widget
+  const holdingsEl = document.getElementById('holdingsMini');
+  if (holdingsEl) {
+    holdingsEl.innerHTML = DATA.portfolio.holdings.slice(0, 3).map(h => `
+      <div class="holding-row">
+        <span class="ticker">${h.ticker}</span>
+        <span style="color:${h.change >= 0 ? 'var(--accent-green)' : 'var(--accent-red)'};font-size:10px;font-weight:600">${h.change >= 0 ? '+' : ''}${h.change}%</span>
+      </div>
+    `).join('');
+  }
+
+  // Task list in tasks widget
+  const taskEl = document.getElementById('taskList');
+  if (taskEl) {
+    const urgencyColors = { high: 'var(--accent-red)', medium: 'var(--accent-amber)', low: 'var(--accent-green)' };
+    taskEl.innerHTML = DATA.tasks.slice(0, 3).map(t => `
+      <div class="task-item">
+        <div class="task-dot" style="background:${urgencyColors[t.urgency]}"></div>
+        <span class="task-text">${t.text}</span>
+        <span class="task-due" style="color:${urgencyColors[t.urgency]}">${t.due}</span>
+      </div>
+    `).join('');
+  }
+
+  // Watchlist
+  const watchEl = document.getElementById('watchList');
+  if (watchEl) {
+    watchEl.innerHTML = DATA.watchlist.slice(0, 3).map(w => `
+      <div class="watch-item">
+        <span class="watch-ticker">${w.ticker}</span>
+        <span class="watch-price">${w.ticker === 'BTC' ? '$' + w.price.toLocaleString() : '$' + w.price.toFixed(2)}</span>
+        <span style="color:${w.change >= 0 ? 'var(--accent-green)' : 'var(--accent-red)'};font-weight:600">${w.change >= 0 ? '+' : ''}${w.change}%</span>
+      </div>
+    `).join('');
+  }
+
+  // Recent transactions
+  const txnEl = document.getElementById('txnList');
+  if (txnEl) {
+    txnEl.innerHTML = DATA.transactions.slice(0, 3).map(t => `
+      <div class="txn-item">
+        <div class="txn-icon">${t.icon}</div>
+        <div class="txn-info">
+          <div class="txn-name">${t.merchant}</div>
+          <div class="txn-cat">${t.category}</div>
+        </div>
+        <div class="txn-amount" style="color:${t.amount >= 0 ? 'var(--accent-green)' : 'var(--text-primary)'}">${t.amount >= 0 ? '+' : '-'}$${Math.abs(t.amount).toFixed(2)}</div>
+      </div>
+    `).join('');
+  }
+}
+
+// ── Chat Engine ──
+const chatMessages = document.getElementById('chatMessages');
+const chatInput = document.getElementById('chatInput');
+const sendBtn = document.getElementById('sendBtn');
+
+chatInput.addEventListener('input', () => {
+  sendBtn.disabled = chatInput.value.trim() === '';
+});
+
+chatInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && chatInput.value.trim()) sendMessage();
+});
+
+function addUserMessage(text) {
+  const msg = document.createElement('div');
+  msg.className = 'chat-msg user';
+  msg.innerHTML = `<div class="bubble">${escapeHtml(text)}</div>`;
+  chatMessages.appendChild(msg);
+  scrollToBottom();
+}
+
+function addAgentMessage(html, cardHtml = '') {
+  const msg = document.createElement('div');
+  msg.className = 'chat-msg agent';
+  msg.innerHTML = `
+    <div class="agent-label">Hiro</div>
+    <div class="bubble">${html}${cardHtml ? `<div class="card-embed">${cardHtml}</div>` : ''}</div>
+  `;
+  chatMessages.appendChild(msg);
+  scrollToBottom();
+
+  setTimeout(() => {
+    const chartCanvas = msg.querySelector('.stock-chart-canvas');
+    if (chartCanvas) drawStockChart(chartCanvas);
+  }, 50);
+}
+
+function showTyping() {
+  const el = document.createElement('div');
+  el.className = 'chat-msg agent';
+  el.id = 'typingIndicator';
+  el.innerHTML = `
+    <div class="agent-label">Hiro</div>
+    <div class="bubble">
+      <div class="typing-indicator">
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+    </div>
+  `;
+  chatMessages.appendChild(el);
+  scrollToBottom();
+}
+
+function removeTyping() {
+  const el = document.getElementById('typingIndicator');
+  if (el) el.remove();
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+// ── Stock Chart (larger, for card) ──
+function drawStockChart(canvas) {
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  ctx.scale(dpr, dpr);
+
+  const w = rect.width;
+  const h = rect.height;
+  const data = [118,120,119,122,121,123,122,124,123,125,124,126,125,127,126,125,127,128,126,127];
+  const min = Math.min(...data) - 2;
+  const max = Math.max(...data) + 2;
+  const range = max - min;
+  const step = w / (data.length - 1);
+
+  ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i < 4; i++) {
+    const y = (h / 4) * i;
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(w, y);
+    ctx.stroke();
+  }
+
+  const gradient = ctx.createLinearGradient(0, 0, 0, h);
+  gradient.addColorStop(0, 'rgba(52,211,153,0.2)');
+  gradient.addColorStop(1, 'transparent');
+
+  ctx.beginPath();
+  data.forEach((val, i) => {
+    const x = i * step;
+    const y = h - ((val - min) / range) * h * 0.9;
+    if (i === 0) ctx.moveTo(x, y);
+    else {
+      const prevX = (i - 1) * step;
+      const prevY = h - ((data[i-1] - min) / range) * h * 0.9;
+      const cpX = (prevX + x) / 2;
+      ctx.bezierCurveTo(cpX, prevY, cpX, y, x, y);
+    }
+  });
+
+  ctx.strokeStyle = '#34d399';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  const lastX = (data.length - 1) * step;
+  ctx.lineTo(lastX, h);
+  ctx.lineTo(0, h);
+  ctx.closePath();
+  ctx.fillStyle = gradient;
+  ctx.fill();
+}
+
+// ── Response Generators ──
+function getPortfolioResponse() {
+  const d = DATA.portfolio;
+  const holdingsHtml = d.holdings.map(h => `
+    <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px">
+      <span style="font-family:'JetBrains Mono',monospace;font-weight:700;min-width:44px">${h.ticker}</span>
+      <span style="color:var(--text-secondary);flex:1;margin-left:6px">${h.shares} shares</span>
+      <span style="font-family:'JetBrains Mono',monospace;min-width:64px;text-align:right">$${h.price.toFixed(2)}</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:${h.change >= 0 ? 'var(--accent-green)' : 'var(--accent-red)'};min-width:48px;text-align:right">${h.change >= 0 ? '+' : ''}${h.change}%</span>
+    </div>
+  `).join('');
+
+  const card = `
+    <div class="stock-card-header">
+      <span class="stock-ticker">Portfolio</span>
+      <span class="stock-price">$${d.total.toLocaleString()} <span style="font-size:11px;opacity:0.7">+${d.change}%</span></span>
+    </div>
+    <div class="stock-chart-area"><canvas class="stock-chart-canvas"></canvas></div>
+    <div class="stock-meta"><span>1M ago</span><span>Performance</span><span>Today</span></div>
+    <div style="padding:4px 14px 10px">${holdingsHtml}</div>
+  `;
+
+  return {
+    text: `Your portfolio is at <strong>$${d.total.toLocaleString()}</strong>, up <strong style="color:var(--accent-green)">+${d.change}%</strong> today. VOO is your largest position at $41K, and NVDA is leading gains at +4.2%.`,
+    card
+  };
+}
+
+function getNetWorthResponse() {
+  const nw = DATA.netWorth;
+  const assetRows = Object.entries(nw.assets).filter(([,v]) => v > 0).map(([k, v]) => `
+    <div class="nw-card-row">
+      <span class="nw-label">${k.charAt(0).toUpperCase() + k.slice(1).replace(/([A-Z])/g, ' $1')}</span>
+      <span class="nw-val">$${v.toLocaleString()}</span>
+    </div>
+  `).join('');
+
+  const liabRows = Object.entries(nw.liabilities).filter(([,v]) => v > 0).map(([k, v]) => `
+    <div class="nw-card-row">
+      <span class="nw-label">${k.charAt(0).toUpperCase() + k.slice(1).replace(/([A-Z])/g, ' $1')}</span>
+      <span class="nw-val" style="color:var(--accent-red)">-$${v.toLocaleString()}</span>
+    </div>
+  `).join('');
+
+  const card = `
+    <div class="nw-card">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-tertiary);padding-bottom:4px">Assets</div>
+      ${assetRows}
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-tertiary);padding:8px 0 4px">Liabilities</div>
+      ${liabRows}
+      <div class="nw-card-row" style="padding-top:10px;border-top:1px solid var(--border-active)">
+        <span class="nw-label" style="color:var(--text-primary);font-weight:700">Net Worth</span>
+        <span class="nw-val" style="color:var(--accent-green);font-size:16px">$${nw.total.toLocaleString()}</span>
+      </div>
+    </div>
+  `;
+
+  return {
+    text: `Your net worth is <strong style="color:var(--accent-green)">$${nw.total.toLocaleString()}</strong>. Total assets of $${nw.totalAssets.toLocaleString()} against $${nw.totalLiabilities.toLocaleString()} in liabilities. Your investment accounts make up the bulk of your assets.`,
+    card
+  };
+}
+
+function getTasksResponse() {
+  const urgencyColors = { high: 'var(--accent-red)', medium: 'var(--accent-amber)', low: 'var(--accent-green)' };
+  const urgencyLabels = { high: 'Urgent', medium: 'Soon', low: 'Later' };
+  const items = DATA.tasks.map(t => `
+    <div class="tasks-card-item">
+      <div class="tasks-card-urgency" style="background:${urgencyColors[t.urgency]}"></div>
+      <div class="tasks-card-info">
+        <h4>${t.text}</h4>
+        <p>${urgencyLabels[t.urgency]} priority</p>
+      </div>
+      <span class="tasks-card-due" style="color:${urgencyColors[t.urgency]}">${t.due}</span>
+    </div>
+  `).join('');
+
+  return {
+    text: `You have <strong>4 financial action items</strong>. Most urgent: your <strong style="color:var(--accent-red)">credit card payment</strong> is due March 1, and <strong style="color:var(--accent-red)">estimated taxes</strong> are due March 15.`,
+    card: `<div class="tasks-card">${items}</div>`
+  };
+}
+
+function getCashFlowResponse() {
+  const cf = DATA.cashFlow;
+  const catRows = cf.categories.map(c => `
+    <div class="cf-card-row">
+      <span class="cf-card-label">${c.name}</span>
+      <span class="cf-card-val">$${c.amount.toLocaleString()} <span style="color:var(--text-tertiary);font-weight:400;font-size:11px">${c.pct}%</span></span>
+    </div>
+  `).join('');
+
+  const card = `
+    <div class="cf-card">
+      <div class="cf-card-row" style="border-bottom:1px solid var(--border-active)">
+        <span class="cf-card-label" style="color:var(--accent-green);font-weight:600">Income</span>
+        <span class="cf-card-val" style="color:var(--accent-green)">$${cf.income.toLocaleString()}</span>
+      </div>
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-tertiary);padding:8px 0 2px">Spending Breakdown</div>
+      ${catRows}
+      <div class="cf-card-row" style="padding-top:8px;border-top:1px solid var(--border-active)">
+        <span class="cf-card-label" style="color:var(--accent-green);font-weight:700">Surplus</span>
+        <span class="cf-card-val" style="color:var(--accent-green);font-size:15px">+$${cf.surplus.toLocaleString()}</span>
+      </div>
+    </div>
+  `;
+
+  return {
+    text: `In <strong>${cf.month}</strong>, you earned <strong>$${cf.income.toLocaleString()}</strong> and spent <strong>$${cf.spending.toLocaleString()}</strong>. That's a <strong style="color:var(--accent-green)">+$${cf.surplus.toLocaleString()}</strong> surplus. Housing is your biggest expense at $1,850 (32%).`,
+    card
+  };
+}
+
+function getWatchlistResponse() {
+  const items = DATA.watchlist.map(w => `
+    <div class="watchlist-card-item">
+      <span class="watchlist-card-ticker">${w.ticker}</span>
+      <span class="watchlist-card-name">${w.name}</span>
+      <span class="watchlist-card-price">${w.ticker === 'BTC' ? '$' + w.price.toLocaleString() : '$' + w.price.toFixed(2)}</span>
+      <span class="watchlist-card-change" style="color:${w.change >= 0 ? 'var(--accent-green)' : 'var(--accent-red)'}">${w.change >= 0 ? '+' : ''}${w.change}%</span>
+    </div>
+  `).join('');
+
+  return {
+    text: `Your watchlist is mostly green today. <strong style="color:var(--accent-green)">BTC</strong> is leading at +3.7%, followed by <strong>AMZN</strong> at +2.3%. <strong style="color:var(--accent-red)">TSLA</strong> is the only one down at -1.3%.`,
+    card: `<div class="watchlist-card">${items}</div>`
+  };
+}
+
+function getTransactionsResponse() {
+  const items = DATA.transactions.map(t => `
+    <div class="txn-card-item">
+      <div class="txn-card-icon" style="background:${t.color}15;color:${t.color}">${t.icon}</div>
+      <div class="txn-card-info">
+        <h4>${t.merchant}</h4>
+        <p>${t.category} &middot; ${t.date}</p>
+      </div>
+      <span class="txn-card-amount" style="color:${t.amount >= 0 ? 'var(--accent-green)' : 'var(--text-primary)'}">${t.amount >= 0 ? '+' : '-'}$${Math.abs(t.amount).toFixed(2)}</span>
+    </div>
+  `).join('');
+
+  return {
+    text: `Here are your recent transactions. Your last payroll deposit of <strong>+$4,100</strong> came in on Feb 15. Recent spending includes groceries at Whole Foods and gas at Shell.`,
+    card: `<div class="txn-card">${items}</div>`
+  };
+}
+
+function getSummaryResponse() {
+  const p = DATA.portfolio;
+  const nw = DATA.netWorth;
+  const cf = DATA.cashFlow;
+  const urgentTasks = DATA.tasks.filter(t => t.urgency === 'high');
+  return {
+    text: `Here's your financial snapshot:\n\n\u2022 <strong>Portfolio</strong>: $${p.total.toLocaleString()} (${p.change >= 0 ? '+' : ''}${p.change}% today)\n\u2022 <strong>Net Worth</strong>: $${nw.total.toLocaleString()}\n\u2022 <strong>Cash Flow</strong>: +$${cf.surplus.toLocaleString()} surplus this month\n\u2022 <strong>Urgent</strong>: ${urgentTasks.length} action items need attention\n\nWant me to drill into any of these?`,
+    card: ''
+  };
+}
+
+function getHiroResponse() {
+  return {
+    text: `Hey Jane! I'm your financial AI assistant. I can help you with:\n\n\u2022 <strong>Portfolio tracking</strong> \u2014 holdings, performance, allocation\n\u2022 <strong>Net worth analysis</strong> \u2014 assets, liabilities, trends\n\u2022 <strong>Cash flow insights</strong> \u2014 income, spending, budgets\n\u2022 <strong>Bill & tax reminders</strong> \u2014 upcoming deadlines\n\u2022 <strong>Market watchlist</strong> \u2014 stocks, crypto, funds\n\nWhat would you like to review?`,
+    card: ''
+  };
+}
+
+function getGenericResponse(text) {
+  const responses = [
+    `I'll look into that for you. Let me pull the relevant financial data for "${text}".`,
+    `Got it. Analyzing "${text}" now \u2014 give me just a moment to pull the numbers.`,
+    `Interesting question! Let me crunch the numbers on "${text}" and get back to you.`,
+  ];
+  return {
+    text: responses[Math.floor(Math.random() * responses.length)],
+    card: ''
+  };
+}
+
+// ── Widget Trigger ──
+function triggerWidget(type) {
+  const labels = {
+    portfolio: 'Show my portfolio',
+    networth: 'What\'s my net worth?',
+    tasks: 'What bills are due?',
+    cashflow: 'Show my cash flow',
+    watchlist: 'How\'s my watchlist?',
+    transactions: 'Show recent transactions',
+  };
+
+  const query = labels[type];
+  addUserMessage(query);
+
+  showTyping();
+  const delay = 600 + Math.random() * 800;
+
+  setTimeout(() => {
+    removeTyping();
+    let response;
+    switch (type) {
+      case 'portfolio': response = getPortfolioResponse(); break;
+      case 'networth': response = getNetWorthResponse(); break;
+      case 'tasks': response = getTasksResponse(); break;
+      case 'cashflow': response = getCashFlowResponse(); break;
+      case 'watchlist': response = getWatchlistResponse(); break;
+      case 'transactions': response = getTransactionsResponse(); break;
+      default: response = getGenericResponse(query);
+    }
+    addAgentMessage(response.text, response.card);
+  }, delay);
+}
+
+// ── Send message ──
+function sendMessage() {
+  const text = chatInput.value.trim();
+  if (!text) return;
+
+  chatInput.value = '';
+  sendBtn.disabled = true;
+  addUserMessage(text);
+
+  showTyping();
+  const delay = 700 + Math.random() * 900;
+
+  setTimeout(() => {
+    removeTyping();
+    const lower = text.toLowerCase();
+    let response;
+
+    if (lower.includes('portfolio') || lower.includes('holdings') || lower.includes('investment')) {
+      response = getPortfolioResponse();
+    } else if (lower.includes('net worth') || lower.includes('networth') || lower.includes('assets') || lower.includes('liabilities')) {
+      response = getNetWorthResponse();
+    } else if (lower.includes('bill') || lower.includes('task') || lower.includes('due') || lower.includes('tax') || lower.includes('action item') || lower.includes('upcoming')) {
+      response = getTasksResponse();
+    } else if (lower.includes('cash flow') || lower.includes('cashflow') || lower.includes('spending') || lower.includes('income') || lower.includes('budget')) {
+      response = getCashFlowResponse();
+    } else if (lower.includes('watch') || lower.includes('track') || lower.includes('stock') || lower.includes('market') || lower.includes('crypto') || lower.includes('bitcoin')) {
+      response = getWatchlistResponse();
+    } else if (lower.includes('transaction') || lower.includes('recent') || lower.includes('purchase') || lower.includes('spent') || lower.includes('bought')) {
+      response = getTransactionsResponse();
+    } else if (lower.includes('summary') || lower.includes('overview') || lower.includes('snapshot') || lower.includes('monthly')) {
+      response = getSummaryResponse();
+    } else if (lower.includes('hiro') || lower.includes('help') || lower.includes('can you')) {
+      response = getHiroResponse();
+    } else {
+      response = getGenericResponse(text);
+    }
+
+    addAgentMessage(response.text, response.card);
+  }, delay);
+}
+
+function handleChip(text) {
+  chatInput.value = text;
+  sendBtn.disabled = false;
+  sendMessage();
+}
+
+function handleCommand(cmd) {
+  // placeholder for settings etc
+}
+
+// ── Init ──
+document.getElementById('greeting').textContent = getGreeting();
+updateClock();
+setInterval(updateClock, 10000);
+
+// Populate widget data
+populateWidgets();
+
+// Draw sparkline on portfolio widget
+setTimeout(() => {
+  drawSparkline('sparkPortfolio', DATA.portfolio.sparkline, '#4a9eff');
+}, 100);
+
+// Animate widget entry
+document.querySelectorAll('.widget').forEach((w, i) => {
+  w.style.opacity = '0';
+  w.style.transform = 'translateY(16px)';
+  w.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+  setTimeout(() => {
+    w.style.opacity = '1';
+    w.style.transform = 'translateY(0)';
+  }, 80 + i * 60);
+});
+
+// Initial Hiro greeting in chat
+setTimeout(() => {
+  addAgentMessage(
+    `Good to see you, Jane. Your portfolio is <strong style="color:var(--accent-green)">up 1.8%</strong> today at $127.4K. You have <strong style="color:var(--accent-amber)">2 urgent items</strong> \u2014 credit card due Mar 1 and estimated taxes Mar 15. Tap any widget or ask me anything.`,
+    ''
+  );
+}, 1200);
+
+// Resize handler for sparkline
+window.addEventListener('resize', () => {
+  drawSparkline('sparkPortfolio', DATA.portfolio.sparkline, '#4a9eff');
+});
+</script>
+
+</body>
+</html>
