@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Hiro — Agent Home</title>
+<title>Hiro — Financial Dashboard</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
@@ -210,79 +210,220 @@
     font-weight: 400;
   }
 
-  /* Finance widget */
-  .widget-finance .widget-icon { background: rgba(74,158,255,0.12); color: var(--accent-blue); }
-  .widget-finance .widget-value { color: var(--text-primary); }
-  .widget-finance .change-up { color: var(--accent-green); font-size: 13px; font-weight: 600; }
-  .widget-finance .sparkline-container { margin-top: 8px; height: 32px; }
-
-  /* Calendar */
-  .widget-calendar .widget-icon { background: rgba(167,139,250,0.12); color: var(--accent-purple); }
-  .widget-calendar .event-time { font-size: 18px; font-weight: 700; color: var(--accent-purple); font-family: 'JetBrains Mono', monospace; }
-  .widget-calendar .event-title { font-size: 13px; color: var(--text-primary); margin-top: 2px; font-weight: 500; }
-
-  /* Weather */
-  .widget-weather .widget-icon { background: rgba(251,191,36,0.12); color: var(--accent-amber); }
-  .widget-weather .temp { font-size: 28px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
-  .widget-weather .condition { font-size: 12px; color: var(--text-secondary); }
-
-  /* Messages */
-  .widget-messages .widget-icon { background: rgba(52,211,153,0.12); color: var(--accent-green); }
-  .widget-messages .badge {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    background: var(--accent-red);
-    color: white;
+  /* ── Portfolio widget ── */
+  .widget-portfolio .widget-icon { background: rgba(74,158,255,0.12); color: var(--accent-blue); }
+  .widget-portfolio .widget-value { color: var(--text-primary); }
+  .widget-portfolio .change-up { color: var(--accent-green); font-size: 13px; font-weight: 600; }
+  .widget-portfolio .change-down { color: var(--accent-red); font-size: 13px; font-weight: 600; }
+  .widget-portfolio .sparkline-container { margin-top: 8px; height: 32px; }
+  .widget-portfolio .holdings-mini {
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .widget-portfolio .holding-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     font-size: 11px;
-    font-weight: 700;
-    padding: 2px 7px;
-    border-radius: 10px;
     font-family: 'JetBrains Mono', monospace;
   }
-
-  /* Hiro */
-  .widget-hiro {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16162a 100%);
-    border-color: rgba(74,158,255,0.15);
-  }
-  .widget-hiro .widget-icon {
-    background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
-    color: white;
-  }
-  .widget-hiro .hiro-rings {
-    position: absolute;
-    top: 50%;
-    right: 16px;
-    transform: translateY(-50%);
-    width: 48px;
-    height: 48px;
-  }
-  .hiro-ring {
-    position: absolute;
-    border-radius: 50%;
-    border: 1px solid rgba(74,158,255,0.2);
-    animation: hiro-pulse 3s ease-in-out infinite;
-  }
-  .hiro-ring:nth-child(1) { inset: 0; animation-delay: 0s; }
-  .hiro-ring:nth-child(2) { inset: -6px; animation-delay: 0.5s; }
-  .hiro-ring:nth-child(3) { inset: -12px; animation-delay: 1s; }
-
-  @keyframes hiro-pulse {
-    0%, 100% { opacity: 0.3; transform: scale(1); }
-    50% { opacity: 0.8; transform: scale(1.05); }
-  }
-
-  /* Notes */
-  .widget-notes .widget-icon { background: rgba(34,211,238,0.12); color: var(--accent-cyan); }
-  .widget-notes .note-preview {
-    font-size: 12px;
+  .widget-portfolio .holding-row .ticker {
     color: var(--text-secondary);
-    line-height: 1.5;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
+    font-weight: 500;
+    min-width: 36px;
+  }
+
+  /* ── Net Worth widget ── */
+  .widget-networth .widget-icon { background: rgba(52,211,153,0.12); color: var(--accent-green); }
+  .widget-networth .nw-bar-container {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .widget-networth .nw-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .widget-networth .nw-bar-label {
+    min-width: 28px;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .widget-networth .nw-bar-track {
+    flex: 1;
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.04);
     overflow: hidden;
+  }
+  .widget-networth .nw-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.6s ease;
+  }
+  .widget-networth .nw-bar-val {
+    min-width: 44px;
+    text-align: right;
+    color: var(--text-secondary);
+    font-size: 10px;
+  }
+
+  /* ── Financial Tasks widget ── */
+  .widget-tasks .widget-icon { background: rgba(251,191,36,0.12); color: var(--accent-amber); }
+  .widget-tasks .task-list {
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .widget-tasks .task-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    line-height: 1.3;
+  }
+  .widget-tasks .task-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .widget-tasks .task-text {
+    flex: 1;
+    color: var(--text-secondary);
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .widget-tasks .task-due {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    flex-shrink: 0;
+  }
+
+  /* ── Cash Flow widget ── */
+  .widget-cashflow .widget-icon { background: rgba(167,139,250,0.12); color: var(--accent-purple); }
+  .widget-cashflow .cf-bars {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .widget-cashflow .cf-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .widget-cashflow .cf-label {
+    min-width: 16px;
+    color: var(--text-tertiary);
+    font-size: 12px;
+  }
+  .widget-cashflow .cf-track {
+    flex: 1;
+    height: 8px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.04);
+    overflow: hidden;
+  }
+  .widget-cashflow .cf-fill {
+    height: 100%;
+    border-radius: 4px;
+  }
+  .widget-cashflow .cf-val {
+    min-width: 38px;
+    text-align: right;
+    color: var(--text-secondary);
+    font-size: 11px;
+  }
+  .widget-cashflow .cf-surplus {
+    margin-top: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* ── Watchlist widget ── */
+  .widget-watchlist .widget-icon { background: rgba(34,211,238,0.12); color: var(--accent-cyan); }
+  .widget-watchlist .watch-list {
+    margin-top: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .widget-watchlist .watch-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .widget-watchlist .watch-ticker {
+    font-weight: 600;
+    color: var(--text-primary);
+    min-width: 36px;
+  }
+  .widget-watchlist .watch-price {
+    color: var(--text-secondary);
+  }
+
+  /* ── Recent Transactions widget ── */
+  .widget-transactions .widget-icon { background: rgba(248,113,113,0.12); color: var(--accent-red); }
+  .widget-transactions .txn-list {
+    margin-top: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .widget-transactions .txn-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+  }
+  .widget-transactions .txn-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    flex-shrink: 0;
+    background: rgba(255,255,255,0.04);
+  }
+  .widget-transactions .txn-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .widget-transactions .txn-name {
+    color: var(--text-primary);
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .widget-transactions .txn-cat {
+    color: var(--text-tertiary);
+    font-size: 10px;
+  }
+  .widget-transactions .txn-amount {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    flex-shrink: 0;
   }
 
   /* Mini sparkline canvas */
@@ -434,196 +575,136 @@
     font-family: 'JetBrains Mono', monospace;
   }
 
-  /* Calendar card */
-  .cal-card {
+  /* Net worth card */
+  .nw-card {
     padding: 14px;
   }
-
-  .cal-card-event {
+  .nw-card-row {
     display: flex;
-    gap: 12px;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .nw-card-row:last-child { border-bottom: none; font-weight: 700; }
+  .nw-card-row .nw-label { color: var(--text-secondary); }
+  .nw-card-row .nw-val { font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+
+  /* Tasks card */
+  .tasks-card {
+    padding: 14px;
+  }
+  .tasks-card-item {
+    display: flex;
+    gap: 10px;
     align-items: flex-start;
     padding: 10px 0;
     border-bottom: 1px solid var(--border);
   }
-
-  .cal-card-event:last-child { border-bottom: none; }
-
-  .cal-time-block {
-    min-width: 48px;
-    text-align: center;
-    padding: 6px 0;
-    border-radius: var(--radius-xs);
-    background: rgba(167,139,250,0.1);
+  .tasks-card-item:last-child { border-bottom: none; }
+  .tasks-card-urgency {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    margin-top: 6px;
+    flex-shrink: 0;
   }
-
-  .cal-time-block .time {
+  .tasks-card-info { flex: 1; }
+  .tasks-card-info h4 { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+  .tasks-card-info p { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+  .tasks-card-due {
+    font-size: 11px;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--accent-purple);
-  }
-
-  .cal-time-block .period {
-    font-size: 10px;
     color: var(--text-tertiary);
-    text-transform: uppercase;
+    flex-shrink: 0;
   }
 
-  .cal-event-info h4 {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-primary);
-  }
-
-  .cal-event-info p {
-    font-size: 12px;
-    color: var(--text-secondary);
-    margin-top: 2px;
-  }
-
-  .cal-event-info .cal-tag {
-    display: inline-block;
-    margin-top: 4px;
-    font-size: 10px;
-    padding: 2px 8px;
-    border-radius: 6px;
-    background: rgba(167,139,250,0.12);
-    color: var(--accent-purple);
-    font-weight: 500;
-  }
-
-  /* Weather card */
-  .weather-card {
+  /* Cash flow card */
+  .cf-card {
     padding: 14px;
   }
-
-  .weather-card-main {
+  .cf-card-row {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
   }
+  .cf-card-row:last-child { border-bottom: none; }
+  .cf-card-label { color: var(--text-secondary); }
+  .cf-card-val { font-family: 'JetBrains Mono', monospace; font-weight: 600; }
 
-  .weather-card-temp {
-    font-size: 36px;
-    font-weight: 700;
-    font-family: 'JetBrains Mono', monospace;
-    letter-spacing: -1px;
-  }
-
-  .weather-card-icon {
-    font-size: 40px;
-    line-height: 1;
-  }
-
-  .weather-card-details {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 8px;
-  }
-
-  .weather-detail {
-    text-align: center;
-    padding: 8px;
-    border-radius: var(--radius-xs);
-    background: rgba(255,255,255,0.03);
-  }
-
-  .weather-detail .wd-label {
-    font-size: 10px;
-    color: var(--text-tertiary);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  .weather-detail .wd-value {
-    font-size: 14px;
-    font-weight: 600;
-    font-family: 'JetBrains Mono', monospace;
-    margin-top: 2px;
-  }
-
-  /* Messages card */
-  .msg-card {
+  /* Watchlist card */
+  .watchlist-card {
     padding: 6px 14px;
   }
-
-  .msg-card-item {
+  .watchlist-card-item {
     display: flex;
     gap: 10px;
     align-items: center;
     padding: 10px 0;
     border-bottom: 1px solid var(--border);
   }
-
-  .msg-card-item:last-child { border-bottom: none; }
-
-  .msg-avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .watchlist-card-item:last-child { border-bottom: none; }
+  .watchlist-card-ticker {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
     font-size: 14px;
-    font-weight: 600;
-    flex-shrink: 0;
+    min-width: 50px;
   }
-
-  .msg-card-info { flex: 1; min-width: 0; }
-
-  .msg-card-info h4 {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-primary);
-  }
-
-  .msg-card-info p {
+  .watchlist-card-name {
+    flex: 1;
     font-size: 12px;
     color: var(--text-secondary);
+    min-width: 0;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
-
-  .msg-time {
-    font-size: 11px;
-    color: var(--text-tertiary);
+  .watchlist-card-price {
     font-family: 'JetBrains Mono', monospace;
-    flex-shrink: 0;
+    font-size: 13px;
+    text-align: right;
+  }
+  .watchlist-card-change {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    min-width: 52px;
+    text-align: right;
   }
 
-  /* Notes card */
-  .notes-card {
-    padding: 14px;
+  /* Transactions card */
+  .txn-card {
+    padding: 6px 14px;
   }
-
-  .note-item {
-    padding: 8px 0;
+  .txn-card-item {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 10px 0;
     border-bottom: 1px solid var(--border);
   }
-
-  .note-item:last-child { border-bottom: none; }
-
-  .note-item h4 {
+  .txn-card-item:last-child { border-bottom: none; }
+  .txn-card-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+    background: rgba(255,255,255,0.04);
+  }
+  .txn-card-info { flex: 1; min-width: 0; }
+  .txn-card-info h4 { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+  .txn-card-info p { font-size: 12px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .txn-card-amount {
+    font-family: 'JetBrains Mono', monospace;
     font-size: 13px;
     font-weight: 600;
-    color: var(--text-primary);
-  }
-
-  .note-item p {
-    font-size: 12px;
-    color: var(--text-secondary);
-    margin-top: 2px;
-    line-height: 1.4;
-  }
-
-  .note-item .note-date {
-    font-size: 10px;
-    color: var(--text-tertiary);
-    margin-top: 4px;
-    font-family: 'JetBrains Mono', monospace;
+    flex-shrink: 0;
   }
 
   /* ── Typing indicator ── */
@@ -747,27 +828,6 @@
     66% { transform: translateX(-60%) translateY(-10px); }
   }
 
-  /* ── Ticker tape animation on finance ── */
-  .ticker-tape {
-    display: flex;
-    gap: 16px;
-    overflow: hidden;
-    margin-top: 6px;
-  }
-
-  .ticker-item {
-    font-size: 10px;
-    font-family: 'JetBrains Mono', monospace;
-    white-space: nowrap;
-    color: var(--text-tertiary);
-    animation: ticker-scroll 20s linear infinite;
-  }
-
-  @keyframes ticker-scroll {
-    from { transform: translateX(0); }
-    to { transform: translateX(-100%); }
-  }
-
   /* Quick action chips */
   .quick-chips {
     display: flex;
@@ -833,83 +893,102 @@
     <!-- Widget Grid -->
     <div class="widget-grid">
 
-      <!-- Finance Widget -->
-      <div class="widget widget-finance" onclick="triggerWidget('finance')">
+      <!-- Portfolio Widget -->
+      <div class="widget widget-portfolio" onclick="triggerWidget('portfolio')">
         <div class="widget-icon">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
         </div>
         <div class="widget-label">Portfolio</div>
-        <div class="widget-value">$48.2K</div>
-        <div class="widget-sub"><span class="change-up">+2.4%</span> today</div>
+        <div class="widget-value">$127.4K</div>
+        <div class="widget-sub"><span class="change-up">+1.8%</span> today</div>
         <div class="sparkline-container">
-          <canvas class="sparkline-canvas" id="sparkFinance"></canvas>
+          <canvas class="sparkline-canvas" id="sparkPortfolio"></canvas>
+        </div>
+        <div class="holdings-mini" id="holdingsMini"></div>
+      </div>
+
+      <!-- Net Worth Widget -->
+      <div class="widget widget-networth" onclick="triggerWidget('networth')">
+        <div class="widget-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 10h20"/><path d="M12 4v16"/></svg>
+        </div>
+        <div class="widget-label">Net Worth</div>
+        <div class="widget-value" style="font-size:18px;color:var(--accent-green)">$341K</div>
+        <div class="nw-bar-container">
+          <div class="nw-bar-row">
+            <span class="nw-bar-label">Ast</span>
+            <div class="nw-bar-track"><div class="nw-bar-fill" style="width:85%;background:var(--accent-green)"></div></div>
+            <span class="nw-bar-val">$478K</span>
+          </div>
+          <div class="nw-bar-row">
+            <span class="nw-bar-label">Dbt</span>
+            <div class="nw-bar-track"><div class="nw-bar-fill" style="width:29%;background:var(--accent-red)"></div></div>
+            <span class="nw-bar-val">$137K</span>
+          </div>
         </div>
       </div>
 
-      <!-- Calendar Widget -->
-      <div class="widget widget-calendar" onclick="triggerWidget('calendar')">
+      <!-- Financial Tasks Widget -->
+      <div class="widget widget-tasks" onclick="triggerWidget('tasks')">
         <div class="widget-icon">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
         </div>
-        <div class="widget-label">Next Event</div>
-        <div class="event-time">10:30</div>
-        <div class="event-title">Design Review</div>
-        <div class="widget-sub">in 47 min</div>
+        <div class="widget-label">Action Items</div>
+        <div class="widget-sub" style="color:var(--accent-amber);font-weight:600;font-size:12px">4 pending</div>
+        <div class="task-list" id="taskList"></div>
       </div>
 
-      <!-- Weather Widget -->
-      <div class="widget widget-weather" onclick="triggerWidget('weather')">
+      <!-- Cash Flow Widget -->
+      <div class="widget widget-cashflow" onclick="triggerWidget('cashflow')">
         <div class="widget-icon">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 18a5 5 0 0 0-3.2-8.8A5.5 5.5 0 0 0 3 12.3 4 4 0 0 0 4 20h13"/><line x1="17" y1="7" x2="17" y2="1"/><line x1="20.3" y1="3.7" x2="22" y2="2"/><line x1="23" y1="7" x2="21" y2="7"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
         </div>
-        <div class="widget-label">Weather</div>
-        <div class="temp">72<span style="font-size:14px;color:var(--text-tertiary)">°F</span></div>
-        <div class="condition">Partly Cloudy</div>
-      </div>
-
-      <!-- Messages Widget -->
-      <div class="widget widget-messages" onclick="triggerWidget('messages')">
-        <div class="badge">3</div>
-        <div class="widget-icon">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <div class="widget-label">Cash Flow</div>
+        <div class="widget-sub" style="font-size:12px;color:var(--text-primary);font-weight:600">February</div>
+        <div class="cf-bars">
+          <div class="cf-row">
+            <span class="cf-label" style="color:var(--accent-green)">&#9650;</span>
+            <div class="cf-track"><div class="cf-fill" style="width:100%;background:var(--accent-green)"></div></div>
+            <span class="cf-val">$8.2K</span>
+          </div>
+          <div class="cf-row">
+            <span class="cf-label" style="color:var(--accent-red)">&#9660;</span>
+            <div class="cf-track"><div class="cf-fill" style="width:71%;background:var(--accent-red)"></div></div>
+            <span class="cf-val">$5.8K</span>
+          </div>
         </div>
-        <div class="widget-label">Messages</div>
-        <div class="widget-value" style="font-size:18px">3 unread</div>
-        <div class="widget-sub">Sarah, Team, Alex</div>
-      </div>
-
-      <!-- Hiro AI Widget -->
-      <div class="widget widget-hiro" onclick="triggerWidget('hiro')">
-        <div class="widget-icon">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v2a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M16 14H8a4 4 0 0 0-4 4v2h16v-2a4 4 0 0 0-4-4z"/></svg>
-        </div>
-        <div class="widget-label">Hiro AI</div>
-        <div class="widget-sub" style="color:var(--accent-blue);font-weight:500">Ready to assist</div>
-        <div class="hiro-rings">
-          <div class="hiro-ring"></div>
-          <div class="hiro-ring"></div>
-          <div class="hiro-ring"></div>
+        <div class="cf-surplus" style="color:var(--accent-green)">
+          <span>+$2,380</span>
+          <span style="color:var(--text-tertiary);font-weight:400;font-size:10px">surplus</span>
         </div>
       </div>
 
-      <!-- Notes Widget -->
-      <div class="widget widget-notes" onclick="triggerWidget('notes')">
+      <!-- Watchlist Widget -->
+      <div class="widget widget-watchlist" onclick="triggerWidget('watchlist')">
         <div class="widget-icon">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
         </div>
-        <div class="widget-label">Notes</div>
-        <div class="widget-value" style="font-size:16px">4 notes</div>
-        <div class="note-preview">API refactor plan, meeting notes...</div>
+        <div class="widget-label">Watchlist</div>
+        <div class="watch-list" id="watchList"></div>
+      </div>
+
+      <!-- Recent Transactions Widget -->
+      <div class="widget widget-transactions" onclick="triggerWidget('transactions')">
+        <div class="widget-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        </div>
+        <div class="widget-label">Recent</div>
+        <div class="txn-list" id="txnList"></div>
       </div>
 
     </div>
 
     <!-- Quick Action Chips -->
     <div class="quick-chips">
-      <div class="chip" onclick="handleChip('Summarize my day')">Summarize my day</div>
-      <div class="chip" onclick="handleChip('Show portfolio')">Show portfolio</div>
-      <div class="chip" onclick="handleChip('Draft an email')">Draft an email</div>
-      <div class="chip" onclick="handleChip('Set a reminder')">Set a reminder</div>
+      <div class="chip" onclick="handleChip('Show my portfolio')">Show my portfolio</div>
+      <div class="chip" onclick="handleChip('Upcoming bills')">Upcoming bills</div>
+      <div class="chip" onclick="handleChip('Track a stock')">Track a stock</div>
+      <div class="chip" onclick="handleChip('Monthly summary')">Monthly summary</div>
     </div>
 
     <!-- Chat Section -->
@@ -938,44 +1017,72 @@
 </div>
 
 <script>
-// ── Sample Data ──
+// ── Sample Financial Data ──
 const DATA = {
   portfolio: {
-    total: 48237.41,
-    change: +2.4,
+    total: 127384.52,
+    change: +1.8,
     holdings: [
-      { ticker: 'NVDA', price: 892.34, change: +4.2, shares: 12 },
-      { ticker: 'AAPL', price: 189.72, change: +0.8, shares: 25 },
-      { ticker: 'TSLA', price: 248.91, change: -1.3, shares: 8 },
-      { ticker: 'MSFT', price: 412.56, change: +1.1, shares: 15 },
+      { ticker: 'VOO', name: 'Vanguard S&P 500', price: 482.17, change: +1.2, shares: 85, value: 40984.45 },
+      { ticker: 'NVDA', name: 'NVIDIA Corp', price: 892.34, change: +4.2, shares: 32, value: 28554.88 },
+      { ticker: 'AAPL', name: 'Apple Inc', price: 189.72, change: +0.8, shares: 65, value: 12331.80 },
+      { ticker: 'BND', name: 'Vanguard Total Bond', price: 72.45, change: -0.1, shares: 120, value: 8694.00 },
     ],
-    sparkline: [42,44,43,45,44,46,45,47,46,48,47,49,48,50,49,48,50,51,49,52,51,53,52,48]
+    sparkline: [118,120,119,122,121,123,122,124,123,125,124,126,125,127,126,125,127,128,126,129,128,127,126,127]
   },
-  calendar: [
-    { time: '10:30', period: 'AM', title: 'Design Review', subtitle: 'Figma walkthrough with team', tag: 'Design', duration: '45 min' },
-    { time: '1:00', period: 'PM', title: 'Standup', subtitle: 'Sprint 14 daily sync', tag: 'Engineering', duration: '15 min' },
-    { time: '3:30', period: 'PM', title: '1:1 with Sarah', subtitle: 'Q1 performance review prep', tag: 'Management', duration: '30 min' },
-  ],
-  weather: {
-    temp: 72,
-    condition: 'Partly Cloudy',
-    icon: '\u26C5',
-    humidity: 54,
-    wind: 8,
-    uv: 6,
-    high: 78,
-    low: 61,
+  netWorth: {
+    total: 341200,
+    assets: {
+      investments: 127384,
+      retirement: 198500,
+      savings: 42300,
+      checking: 8750,
+      property: 0,
+      crypto: 4200,
+      other: 97000,
+    },
+    liabilities: {
+      mortgage: 0,
+      studentLoans: 28400,
+      autoLoan: 12600,
+      creditCards: 2180,
+      other: 94100,
+    },
+    totalAssets: 478134,
+    totalLiabilities: 137280,
   },
-  messages: [
-    { from: 'Sarah Chen', avatar: 'SC', color: '#a78bfa', preview: 'Can we move the 1:1 to 4pm?', time: '9:12a' },
-    { from: 'Team Design', avatar: 'TD', color: '#4a9eff', preview: 'New mockups uploaded to Figma', time: '8:45a' },
-    { from: 'Alex Rivera', avatar: 'AR', color: '#34d399', preview: 'PR approved \u2014 ready to merge', time: '8:20a' },
+  tasks: [
+    { text: 'Pay credit card statement', due: 'Mar 1', urgency: 'high', icon: '!' },
+    { text: 'Review 401(k) allocation', due: 'Mar 5', urgency: 'medium', icon: '\u21BB' },
+    { text: 'File quarterly estimated tax', due: 'Mar 15', urgency: 'high', icon: '\u26A0' },
+    { text: 'Renew umbrella insurance', due: 'Mar 22', urgency: 'low', icon: '\u2713' },
   ],
-  notes: [
-    { title: 'API Refactor Plan', body: 'Migrate to v3 endpoints. Deprecate legacy auth flow by Q2. Need to update SDK wrappers.', date: 'Today, 8:30 AM' },
-    { title: 'Meeting Notes \u2014 Product', body: 'Agreed on timeline for beta launch. Key risk: third-party integrations.', date: 'Yesterday' },
-    { title: 'Ideas: Agent UX', body: 'Explore proactive suggestions, contextual cards, ambient notifications.', date: 'Feb 22' },
-    { title: 'Reading List', body: 'Attention Is All You Need, Scaling Laws, RLHF paper.', date: 'Feb 20' },
+  cashFlow: {
+    month: 'February',
+    income: 8200,
+    spending: 5820,
+    surplus: 2380,
+    categories: [
+      { name: 'Housing', amount: 1850, pct: 32 },
+      { name: 'Food & Dining', amount: 920, pct: 16 },
+      { name: 'Transportation', amount: 480, pct: 8 },
+      { name: 'Subscriptions', amount: 185, pct: 3 },
+      { name: 'Shopping', amount: 640, pct: 11 },
+      { name: 'Utilities', amount: 310, pct: 5 },
+      { name: 'Other', amount: 1435, pct: 25 },
+    ],
+  },
+  watchlist: [
+    { ticker: 'MSFT', name: 'Microsoft', price: 412.56, change: +1.1 },
+    { ticker: 'AMZN', name: 'Amazon', price: 178.92, change: +2.3 },
+    { ticker: 'TSLA', name: 'Tesla', price: 248.91, change: -1.3 },
+    { ticker: 'BTC', name: 'Bitcoin', price: 62480, change: +3.7 },
+  ],
+  transactions: [
+    { merchant: 'Whole Foods', amount: -67.42, category: 'Groceries', icon: '\uD83D\uDED2', date: 'Today', color: '#34d399' },
+    { merchant: 'Spotify', amount: -10.99, category: 'Subscription', icon: '\uD83C\uDFB5', date: 'Yesterday', color: '#a78bfa' },
+    { merchant: 'Shell Gas', amount: -48.30, category: 'Transportation', icon: '\u26FD', date: 'Yesterday', color: '#fbbf24' },
+    { merchant: 'Payroll Deposit', amount: +4100.00, category: 'Income', icon: '\uD83D\uDCB0', date: 'Feb 15', color: '#4a9eff' },
   ],
 };
 
@@ -1000,6 +1107,13 @@ function scrollToBottom() {
   });
 }
 
+function fmtMoney(n, compact) {
+  if (compact && Math.abs(n) >= 1000) {
+    return '$' + (n / 1000).toFixed(1) + 'K';
+  }
+  return (n < 0 ? '-' : '') + '$' + Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
 // ── Sparkline renderer ──
 function drawSparkline(canvasId, data, color = '#4a9eff') {
   const canvas = document.getElementById(canvasId);
@@ -1018,7 +1132,6 @@ function drawSparkline(canvasId, data, color = '#4a9eff') {
   const range = max - min || 1;
   const step = w / (data.length - 1);
 
-  // Gradient fill
   const gradient = ctx.createLinearGradient(0, 0, 0, h);
   gradient.addColorStop(0, color + '30');
   gradient.addColorStop(1, 'transparent');
@@ -1036,19 +1149,16 @@ function drawSparkline(canvasId, data, color = '#4a9eff') {
   const lastY = h - ((data[data.length - 1] - min) / range) * h * 0.85;
   ctx.lineTo(lastX, lastY);
 
-  // Stroke
   ctx.strokeStyle = color;
   ctx.lineWidth = 1.5;
   ctx.stroke();
 
-  // Fill
   ctx.lineTo(lastX, h);
   ctx.lineTo(0, h);
   ctx.closePath();
   ctx.fillStyle = gradient;
   ctx.fill();
 
-  // Glow dot at end
   ctx.beginPath();
   ctx.arc(lastX, lastY, 3, 0, Math.PI * 2);
   ctx.fillStyle = color;
@@ -1057,6 +1167,60 @@ function drawSparkline(canvasId, data, color = '#4a9eff') {
   ctx.arc(lastX, lastY, 6, 0, Math.PI * 2);
   ctx.fillStyle = color + '30';
   ctx.fill();
+}
+
+// ── Populate widgets with data ──
+function populateWidgets() {
+  // Holdings mini in portfolio widget
+  const holdingsEl = document.getElementById('holdingsMini');
+  if (holdingsEl) {
+    holdingsEl.innerHTML = DATA.portfolio.holdings.slice(0, 3).map(h => `
+      <div class="holding-row">
+        <span class="ticker">${h.ticker}</span>
+        <span style="color:${h.change >= 0 ? 'var(--accent-green)' : 'var(--accent-red)'};font-size:10px;font-weight:600">${h.change >= 0 ? '+' : ''}${h.change}%</span>
+      </div>
+    `).join('');
+  }
+
+  // Task list in tasks widget
+  const taskEl = document.getElementById('taskList');
+  if (taskEl) {
+    const urgencyColors = { high: 'var(--accent-red)', medium: 'var(--accent-amber)', low: 'var(--accent-green)' };
+    taskEl.innerHTML = DATA.tasks.slice(0, 3).map(t => `
+      <div class="task-item">
+        <div class="task-dot" style="background:${urgencyColors[t.urgency]}"></div>
+        <span class="task-text">${t.text}</span>
+        <span class="task-due" style="color:${urgencyColors[t.urgency]}">${t.due}</span>
+      </div>
+    `).join('');
+  }
+
+  // Watchlist
+  const watchEl = document.getElementById('watchList');
+  if (watchEl) {
+    watchEl.innerHTML = DATA.watchlist.slice(0, 3).map(w => `
+      <div class="watch-item">
+        <span class="watch-ticker">${w.ticker}</span>
+        <span class="watch-price">${w.ticker === 'BTC' ? '$' + w.price.toLocaleString() : '$' + w.price.toFixed(2)}</span>
+        <span style="color:${w.change >= 0 ? 'var(--accent-green)' : 'var(--accent-red)'};font-weight:600">${w.change >= 0 ? '+' : ''}${w.change}%</span>
+      </div>
+    `).join('');
+  }
+
+  // Recent transactions
+  const txnEl = document.getElementById('txnList');
+  if (txnEl) {
+    txnEl.innerHTML = DATA.transactions.slice(0, 3).map(t => `
+      <div class="txn-item">
+        <div class="txn-icon">${t.icon}</div>
+        <div class="txn-info">
+          <div class="txn-name">${t.merchant}</div>
+          <div class="txn-cat">${t.category}</div>
+        </div>
+        <div class="txn-amount" style="color:${t.amount >= 0 ? 'var(--accent-green)' : 'var(--text-primary)'}">${t.amount >= 0 ? '+' : '-'}$${Math.abs(t.amount).toFixed(2)}</div>
+      </div>
+    `).join('');
+  }
 }
 
 // ── Chat Engine ──
@@ -1090,7 +1254,6 @@ function addAgentMessage(html, cardHtml = '') {
   chatMessages.appendChild(msg);
   scrollToBottom();
 
-  // Render any charts in the new card
   setTimeout(() => {
     const chartCanvas = msg.querySelector('.stock-chart-canvas');
     if (chartCanvas) drawStockChart(chartCanvas);
@@ -1135,13 +1298,12 @@ function drawStockChart(canvas) {
 
   const w = rect.width;
   const h = rect.height;
-  const data = [880,884,878,882,886,890,885,888,892,889,893,896,891,888,892,895,890,894,892];
+  const data = [118,120,119,122,121,123,122,124,123,125,124,126,125,127,126,125,127,128,126,127];
   const min = Math.min(...data) - 2;
   const max = Math.max(...data) + 2;
   const range = max - min;
   const step = w / (data.length - 1);
 
-  // Grid lines
   ctx.strokeStyle = 'rgba(255,255,255,0.04)';
   ctx.lineWidth = 1;
   for (let i = 0; i < 4; i++) {
@@ -1152,7 +1314,6 @@ function drawStockChart(canvas) {
     ctx.stroke();
   }
 
-  // Chart line
   const gradient = ctx.createLinearGradient(0, 0, 0, h);
   gradient.addColorStop(0, 'rgba(52,211,153,0.2)');
   gradient.addColorStop(1, 'transparent');
@@ -1174,7 +1335,6 @@ function drawStockChart(canvas) {
   ctx.lineWidth = 2;
   ctx.stroke();
 
-  // Fill
   const lastX = (data.length - 1) * step;
   ctx.lineTo(lastX, h);
   ctx.lineTo(0, h);
@@ -1184,129 +1344,175 @@ function drawStockChart(canvas) {
 }
 
 // ── Response Generators ──
-function getFinanceResponse() {
+function getPortfolioResponse() {
   const d = DATA.portfolio;
   const holdingsHtml = d.holdings.map(h => `
-    <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)">
-      <span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px">${h.ticker}</span>
-      <span style="font-size:13px;color:var(--text-secondary)">${h.shares} shares</span>
-      <span style="font-family:'JetBrains Mono',monospace;font-size:13px">$${h.price.toFixed(2)}</span>
-      <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:${h.change >= 0 ? 'var(--accent-green)' : 'var(--accent-red)'}">${h.change >= 0 ? '+' : ''}${h.change}%</span>
+    <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px">
+      <span style="font-family:'JetBrains Mono',monospace;font-weight:700;min-width:44px">${h.ticker}</span>
+      <span style="color:var(--text-secondary);flex:1;margin-left:6px">${h.shares} shares</span>
+      <span style="font-family:'JetBrains Mono',monospace;min-width:64px;text-align:right">$${h.price.toFixed(2)}</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:${h.change >= 0 ? 'var(--accent-green)' : 'var(--accent-red)'};min-width:48px;text-align:right">${h.change >= 0 ? '+' : ''}${h.change}%</span>
     </div>
   `).join('');
 
   const card = `
     <div class="stock-card-header">
-      <span class="stock-ticker">NVDA</span>
-      <span class="stock-price">$892.34 <span style="font-size:11px;opacity:0.7">+4.2%</span></span>
+      <span class="stock-ticker">Portfolio</span>
+      <span class="stock-price">$${d.total.toLocaleString()} <span style="font-size:11px;opacity:0.7">+${d.change}%</span></span>
     </div>
     <div class="stock-chart-area"><canvas class="stock-chart-canvas"></canvas></div>
-    <div class="stock-meta"><span>9:30 AM</span><span>1D</span><span>Now</span></div>
+    <div class="stock-meta"><span>1M ago</span><span>Performance</span><span>Today</span></div>
     <div style="padding:4px 14px 10px">${holdingsHtml}</div>
   `;
 
   return {
-    text: `Your portfolio is at <strong>$${d.total.toLocaleString()}</strong>, up <strong style="color:var(--accent-green)">+${d.change}%</strong> today. NVDA is leading with +4.2%. Here's the breakdown:`,
+    text: `Your portfolio is at <strong>$${d.total.toLocaleString()}</strong>, up <strong style="color:var(--accent-green)">+${d.change}%</strong> today. VOO is your largest position at $41K, and NVDA is leading gains at +4.2%.`,
     card
   };
 }
 
-function getCalendarResponse() {
-  const events = DATA.calendar.map(e => `
-    <div class="cal-card-event">
-      <div class="cal-time-block">
-        <div class="time">${e.time}</div>
-        <div class="period">${e.period}</div>
+function getNetWorthResponse() {
+  const nw = DATA.netWorth;
+  const assetRows = Object.entries(nw.assets).filter(([,v]) => v > 0).map(([k, v]) => `
+    <div class="nw-card-row">
+      <span class="nw-label">${k.charAt(0).toUpperCase() + k.slice(1).replace(/([A-Z])/g, ' $1')}</span>
+      <span class="nw-val">$${v.toLocaleString()}</span>
+    </div>
+  `).join('');
+
+  const liabRows = Object.entries(nw.liabilities).filter(([,v]) => v > 0).map(([k, v]) => `
+    <div class="nw-card-row">
+      <span class="nw-label">${k.charAt(0).toUpperCase() + k.slice(1).replace(/([A-Z])/g, ' $1')}</span>
+      <span class="nw-val" style="color:var(--accent-red)">-$${v.toLocaleString()}</span>
+    </div>
+  `).join('');
+
+  const card = `
+    <div class="nw-card">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-tertiary);padding-bottom:4px">Assets</div>
+      ${assetRows}
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-tertiary);padding:8px 0 4px">Liabilities</div>
+      ${liabRows}
+      <div class="nw-card-row" style="padding-top:10px;border-top:1px solid var(--border-active)">
+        <span class="nw-label" style="color:var(--text-primary);font-weight:700">Net Worth</span>
+        <span class="nw-val" style="color:var(--accent-green);font-size:16px">$${nw.total.toLocaleString()}</span>
       </div>
-      <div class="cal-event-info">
-        <h4>${e.title}</h4>
-        <p>${e.subtitle} \u00B7 ${e.duration}</p>
-        <span class="cal-tag">${e.tag}</span>
+    </div>
+  `;
+
+  return {
+    text: `Your net worth is <strong style="color:var(--accent-green)">$${nw.total.toLocaleString()}</strong>. Total assets of $${nw.totalAssets.toLocaleString()} against $${nw.totalLiabilities.toLocaleString()} in liabilities. Your investment accounts make up the bulk of your assets.`,
+    card
+  };
+}
+
+function getTasksResponse() {
+  const urgencyColors = { high: 'var(--accent-red)', medium: 'var(--accent-amber)', low: 'var(--accent-green)' };
+  const urgencyLabels = { high: 'Urgent', medium: 'Soon', low: 'Later' };
+  const items = DATA.tasks.map(t => `
+    <div class="tasks-card-item">
+      <div class="tasks-card-urgency" style="background:${urgencyColors[t.urgency]}"></div>
+      <div class="tasks-card-info">
+        <h4>${t.text}</h4>
+        <p>${urgencyLabels[t.urgency]} priority</p>
       </div>
+      <span class="tasks-card-due" style="color:${urgencyColors[t.urgency]}">${t.due}</span>
     </div>
   `).join('');
 
   return {
-    text: `You have <strong>3 events</strong> today. Your next meeting is <strong>Design Review</strong> at 10:30 AM \u2014 starting in about 47 minutes.`,
-    card: `<div class="cal-card">${events}</div>`
+    text: `You have <strong>4 financial action items</strong>. Most urgent: your <strong style="color:var(--accent-red)">credit card payment</strong> is due March 1, and <strong style="color:var(--accent-red)">estimated taxes</strong> are due March 15.`,
+    card: `<div class="tasks-card">${items}</div>`
   };
 }
 
-function getWeatherResponse() {
-  const w = DATA.weather;
+function getCashFlowResponse() {
+  const cf = DATA.cashFlow;
+  const catRows = cf.categories.map(c => `
+    <div class="cf-card-row">
+      <span class="cf-card-label">${c.name}</span>
+      <span class="cf-card-val">$${c.amount.toLocaleString()} <span style="color:var(--text-tertiary);font-weight:400;font-size:11px">${c.pct}%</span></span>
+    </div>
+  `).join('');
+
+  const card = `
+    <div class="cf-card">
+      <div class="cf-card-row" style="border-bottom:1px solid var(--border-active)">
+        <span class="cf-card-label" style="color:var(--accent-green);font-weight:600">Income</span>
+        <span class="cf-card-val" style="color:var(--accent-green)">$${cf.income.toLocaleString()}</span>
+      </div>
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-tertiary);padding:8px 0 2px">Spending Breakdown</div>
+      ${catRows}
+      <div class="cf-card-row" style="padding-top:8px;border-top:1px solid var(--border-active)">
+        <span class="cf-card-label" style="color:var(--accent-green);font-weight:700">Surplus</span>
+        <span class="cf-card-val" style="color:var(--accent-green);font-size:15px">+$${cf.surplus.toLocaleString()}</span>
+      </div>
+    </div>
+  `;
+
   return {
-    text: `Currently <strong>${w.temp}\u00B0F</strong> and ${w.condition.toLowerCase()} in San Francisco. High of ${w.high}\u00B0, low of ${w.low}\u00B0.`,
-    card: `
-      <div class="weather-card">
-        <div class="weather-card-main">
-          <div>
-            <div class="weather-card-temp">${w.temp}\u00B0<span style="font-size:18px;color:var(--text-tertiary)">F</span></div>
-            <div style="font-size:13px;color:var(--text-secondary)">${w.condition}</div>
-          </div>
-          <div class="weather-card-icon">${w.icon}</div>
-        </div>
-        <div class="weather-card-details">
-          <div class="weather-detail"><div class="wd-label">Humidity</div><div class="wd-value">${w.humidity}%</div></div>
-          <div class="weather-detail"><div class="wd-label">Wind</div><div class="wd-value">${w.wind}mph</div></div>
-          <div class="weather-detail"><div class="wd-label">UV</div><div class="wd-value">${w.uv}</div></div>
-        </div>
-      </div>
-    `
+    text: `In <strong>${cf.month}</strong>, you earned <strong>$${cf.income.toLocaleString()}</strong> and spent <strong>$${cf.spending.toLocaleString()}</strong>. That's a <strong style="color:var(--accent-green)">+$${cf.surplus.toLocaleString()}</strong> surplus. Housing is your biggest expense at $1,850 (32%).`,
+    card
   };
 }
 
-function getMessagesResponse() {
-  const msgs = DATA.messages.map(m => `
-    <div class="msg-card-item">
-      <div class="msg-avatar" style="background:${m.color}22;color:${m.color}">${m.avatar}</div>
-      <div class="msg-card-info">
-        <h4>${m.from}</h4>
-        <p>${m.preview}</p>
-      </div>
-      <span class="msg-time">${m.time}</span>
+function getWatchlistResponse() {
+  const items = DATA.watchlist.map(w => `
+    <div class="watchlist-card-item">
+      <span class="watchlist-card-ticker">${w.ticker}</span>
+      <span class="watchlist-card-name">${w.name}</span>
+      <span class="watchlist-card-price">${w.ticker === 'BTC' ? '$' + w.price.toLocaleString() : '$' + w.price.toFixed(2)}</span>
+      <span class="watchlist-card-change" style="color:${w.change >= 0 ? 'var(--accent-green)' : 'var(--accent-red)'}">${w.change >= 0 ? '+' : ''}${w.change}%</span>
     </div>
   `).join('');
 
   return {
-    text: `You have <strong>3 unread messages</strong>. Sarah is asking about rescheduling, the design team shared new mockups, and Alex's PR is ready.`,
-    card: `<div class="msg-card">${msgs}</div>`
+    text: `Your watchlist is mostly green today. <strong style="color:var(--accent-green)">BTC</strong> is leading at +3.7%, followed by <strong>AMZN</strong> at +2.3%. <strong style="color:var(--accent-red)">TSLA</strong> is the only one down at -1.3%.`,
+    card: `<div class="watchlist-card">${items}</div>`
+  };
+}
+
+function getTransactionsResponse() {
+  const items = DATA.transactions.map(t => `
+    <div class="txn-card-item">
+      <div class="txn-card-icon" style="background:${t.color}15;color:${t.color}">${t.icon}</div>
+      <div class="txn-card-info">
+        <h4>${t.merchant}</h4>
+        <p>${t.category} &middot; ${t.date}</p>
+      </div>
+      <span class="txn-card-amount" style="color:${t.amount >= 0 ? 'var(--accent-green)' : 'var(--text-primary)'}">${t.amount >= 0 ? '+' : '-'}$${Math.abs(t.amount).toFixed(2)}</span>
+    </div>
+  `).join('');
+
+  return {
+    text: `Here are your recent transactions. Your last payroll deposit of <strong>+$4,100</strong> came in on Feb 15. Recent spending includes groceries at Whole Foods and gas at Shell.`,
+    card: `<div class="txn-card">${items}</div>`
+  };
+}
+
+function getSummaryResponse() {
+  const p = DATA.portfolio;
+  const nw = DATA.netWorth;
+  const cf = DATA.cashFlow;
+  const urgentTasks = DATA.tasks.filter(t => t.urgency === 'high');
+  return {
+    text: `Here's your financial snapshot:\n\n\u2022 <strong>Portfolio</strong>: $${p.total.toLocaleString()} (${p.change >= 0 ? '+' : ''}${p.change}% today)\n\u2022 <strong>Net Worth</strong>: $${nw.total.toLocaleString()}\n\u2022 <strong>Cash Flow</strong>: +$${cf.surplus.toLocaleString()} surplus this month\n\u2022 <strong>Urgent</strong>: ${urgentTasks.length} action items need attention\n\nWant me to drill into any of these?`,
+    card: ''
   };
 }
 
 function getHiroResponse() {
   return {
-    text: `Hey Jane! I'm Hiro, your AI assistant. I can help you with:\n\n\u2022 <strong>Portfolio & market data</strong> \u2014 real-time insights\n\u2022 <strong>Calendar management</strong> \u2014 schedule, reschedule, prep\n\u2022 <strong>Communications</strong> \u2014 draft, summarize, prioritize\n\u2022 <strong>Research & notes</strong> \u2014 capture ideas, find info\n\nWhat would you like to work on?`,
-    card: ''
-  };
-}
-
-function getNotesResponse() {
-  const notes = DATA.notes.map(n => `
-    <div class="note-item">
-      <h4>${n.title}</h4>
-      <p>${n.body}</p>
-      <div class="note-date">${n.date}</div>
-    </div>
-  `).join('');
-
-  return {
-    text: `You have <strong>4 notes</strong>. Most recent is your API refactor plan from this morning.`,
-    card: `<div class="notes-card">${notes}</div>`
-  };
-}
-
-function getSummaryResponse() {
-  return {
-    text: `Here's your day at a glance:\n\n\u2022 <strong>Portfolio</strong>: $48.2K (+2.4%) \u2014 NVDA leading\n\u2022 <strong>Calendar</strong>: 3 events, next in 47 min\n\u2022 <strong>Messages</strong>: 3 unread \u2014 Sarah wants to reschedule\n\u2022 <strong>Weather</strong>: 72\u00B0F, partly cloudy\n\nLooks like a productive day ahead. Want me to prep anything for your Design Review?`,
+    text: `Hey Jane! I'm your financial AI assistant. I can help you with:\n\n\u2022 <strong>Portfolio tracking</strong> \u2014 holdings, performance, allocation\n\u2022 <strong>Net worth analysis</strong> \u2014 assets, liabilities, trends\n\u2022 <strong>Cash flow insights</strong> \u2014 income, spending, budgets\n\u2022 <strong>Bill & tax reminders</strong> \u2014 upcoming deadlines\n\u2022 <strong>Market watchlist</strong> \u2014 stocks, crypto, funds\n\nWhat would you like to review?`,
     card: ''
   };
 }
 
 function getGenericResponse(text) {
   const responses = [
-    `I'll look into that for you. Let me process "${text}" and get back to you with some options.`,
-    `Got it. I'm working on "${text}" now. Give me just a moment to pull the relevant data.`,
-    `Interesting request! Let me analyze "${text}" and prepare a response for you.`,
+    `I'll look into that for you. Let me pull the relevant financial data for "${text}".`,
+    `Got it. Analyzing "${text}" now \u2014 give me just a moment to pull the numbers.`,
+    `Interesting question! Let me crunch the numbers on "${text}" and get back to you.`,
   ];
   return {
     text: responses[Math.floor(Math.random() * responses.length)],
@@ -1317,12 +1523,12 @@ function getGenericResponse(text) {
 // ── Widget Trigger ──
 function triggerWidget(type) {
   const labels = {
-    finance: 'Show my portfolio',
-    calendar: 'What\'s on my calendar?',
-    weather: 'How\'s the weather?',
-    messages: 'Show my messages',
-    hiro: 'Hey Hiro, what can you do?',
-    notes: 'Show my notes',
+    portfolio: 'Show my portfolio',
+    networth: 'What\'s my net worth?',
+    tasks: 'What bills are due?',
+    cashflow: 'Show my cash flow',
+    watchlist: 'How\'s my watchlist?',
+    transactions: 'Show recent transactions',
   };
 
   const query = labels[type];
@@ -1335,12 +1541,12 @@ function triggerWidget(type) {
     removeTyping();
     let response;
     switch (type) {
-      case 'finance': response = getFinanceResponse(); break;
-      case 'calendar': response = getCalendarResponse(); break;
-      case 'weather': response = getWeatherResponse(); break;
-      case 'messages': response = getMessagesResponse(); break;
-      case 'hiro': response = getHiroResponse(); break;
-      case 'notes': response = getNotesResponse(); break;
+      case 'portfolio': response = getPortfolioResponse(); break;
+      case 'networth': response = getNetWorthResponse(); break;
+      case 'tasks': response = getTasksResponse(); break;
+      case 'cashflow': response = getCashFlowResponse(); break;
+      case 'watchlist': response = getWatchlistResponse(); break;
+      case 'transactions': response = getTransactionsResponse(); break;
       default: response = getGenericResponse(query);
     }
     addAgentMessage(response.text, response.card);
@@ -1364,17 +1570,19 @@ function sendMessage() {
     const lower = text.toLowerCase();
     let response;
 
-    if (lower.includes('portfolio') || lower.includes('stock') || lower.includes('finance') || lower.includes('market')) {
-      response = getFinanceResponse();
-    } else if (lower.includes('calendar') || lower.includes('schedule') || lower.includes('meeting') || lower.includes('event')) {
-      response = getCalendarResponse();
-    } else if (lower.includes('weather') || lower.includes('temperature') || lower.includes('forecast')) {
-      response = getWeatherResponse();
-    } else if (lower.includes('message') || lower.includes('unread') || lower.includes('inbox')) {
-      response = getMessagesResponse();
-    } else if (lower.includes('note') || lower.includes('notes')) {
-      response = getNotesResponse();
-    } else if (lower.includes('summarize') || lower.includes('summary') || lower.includes('my day') || lower.includes('overview')) {
+    if (lower.includes('portfolio') || lower.includes('holdings') || lower.includes('investment')) {
+      response = getPortfolioResponse();
+    } else if (lower.includes('net worth') || lower.includes('networth') || lower.includes('assets') || lower.includes('liabilities')) {
+      response = getNetWorthResponse();
+    } else if (lower.includes('bill') || lower.includes('task') || lower.includes('due') || lower.includes('tax') || lower.includes('action item') || lower.includes('upcoming')) {
+      response = getTasksResponse();
+    } else if (lower.includes('cash flow') || lower.includes('cashflow') || lower.includes('spending') || lower.includes('income') || lower.includes('budget')) {
+      response = getCashFlowResponse();
+    } else if (lower.includes('watch') || lower.includes('track') || lower.includes('stock') || lower.includes('market') || lower.includes('crypto') || lower.includes('bitcoin')) {
+      response = getWatchlistResponse();
+    } else if (lower.includes('transaction') || lower.includes('recent') || lower.includes('purchase') || lower.includes('spent') || lower.includes('bought')) {
+      response = getTransactionsResponse();
+    } else if (lower.includes('summary') || lower.includes('overview') || lower.includes('snapshot') || lower.includes('monthly')) {
       response = getSummaryResponse();
     } else if (lower.includes('hiro') || lower.includes('help') || lower.includes('can you')) {
       response = getHiroResponse();
@@ -1401,9 +1609,12 @@ document.getElementById('greeting').textContent = getGreeting();
 updateClock();
 setInterval(updateClock, 10000);
 
-// Draw sparkline on finance widget
+// Populate widget data
+populateWidgets();
+
+// Draw sparkline on portfolio widget
 setTimeout(() => {
-  drawSparkline('sparkFinance', DATA.portfolio.sparkline, '#4a9eff');
+  drawSparkline('sparkPortfolio', DATA.portfolio.sparkline, '#4a9eff');
 }, 100);
 
 // Animate widget entry
@@ -1420,14 +1631,14 @@ document.querySelectorAll('.widget').forEach((w, i) => {
 // Initial Hiro greeting in chat
 setTimeout(() => {
   addAgentMessage(
-    `Good to see you, Jane. You have <strong>3 events</strong> today and your portfolio is <strong style="color:var(--accent-green)">up 2.4%</strong>. Tap any widget or ask me anything.`,
+    `Good to see you, Jane. Your portfolio is <strong style="color:var(--accent-green)">up 1.8%</strong> today at $127.4K. You have <strong style="color:var(--accent-amber)">2 urgent items</strong> \u2014 credit card due Mar 1 and estimated taxes Mar 15. Tap any widget or ask me anything.`,
     ''
   );
 }, 1200);
 
 // Resize handler for sparkline
 window.addEventListener('resize', () => {
-  drawSparkline('sparkFinance', DATA.portfolio.sparkline, '#4a9eff');
+  drawSparkline('sparkPortfolio', DATA.portfolio.sparkline, '#4a9eff');
 });
 </script>
 
