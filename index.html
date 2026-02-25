@@ -1,0 +1,1435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Hiro — Agent Home</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg-primary: #0a0a0f;
+    --bg-secondary: #12121a;
+    --bg-card: #16161f;
+    --bg-card-hover: #1c1c28;
+    --bg-elevated: #1e1e2a;
+    --bg-input: #1a1a26;
+    --border: rgba(255,255,255,0.06);
+    --border-active: rgba(255,255,255,0.12);
+    --text-primary: #f0f0f5;
+    --text-secondary: #8888a0;
+    --text-tertiary: #55556a;
+    --accent-blue: #4a9eff;
+    --accent-green: #34d399;
+    --accent-red: #f87171;
+    --accent-amber: #fbbf24;
+    --accent-purple: #a78bfa;
+    --accent-cyan: #22d3ee;
+    --glow-blue: rgba(74,158,255,0.15);
+    --glow-green: rgba(52,211,153,0.12);
+    --glow-purple: rgba(167,139,250,0.12);
+    --radius: 16px;
+    --radius-sm: 12px;
+    --radius-xs: 8px;
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    height: 100%;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    max-width: 430px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  /* ── Scrollable area ── */
+  .app-container {
+    height: 100vh;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .scroll-area {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    padding-bottom: 16px;
+  }
+
+  .scroll-area::-webkit-scrollbar { display: none; }
+
+  /* ── Header ── */
+  .header {
+    padding: 52px 20px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 10;
+  }
+
+  .header-left h1 {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #f0f0f5 0%, #8888a0 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .header-left .greeting {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+    font-weight: 400;
+  }
+
+  .header-right {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .header-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .header-btn:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--border-active);
+  }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent-green);
+    animation: pulse-dot 2s ease-in-out infinite;
+    box-shadow: 0 0 8px var(--accent-green);
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(0.85); }
+  }
+
+  /* ── Widget Grid ── */
+  .widget-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 8px 16px;
+  }
+
+  .widget {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    min-height: 100px;
+  }
+
+  .widget::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+  }
+
+  .widget:active {
+    transform: scale(0.97);
+    background: var(--bg-card-hover);
+    border-color: var(--border-active);
+  }
+
+  .widget-wide {
+    grid-column: span 2;
+  }
+
+  .widget-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+
+  .widget-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 4px;
+  }
+
+  .widget-value {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .widget-sub {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-top: 3px;
+    font-weight: 400;
+  }
+
+  /* Finance widget */
+  .widget-finance .widget-icon { background: rgba(74,158,255,0.12); color: var(--accent-blue); }
+  .widget-finance .widget-value { color: var(--text-primary); }
+  .widget-finance .change-up { color: var(--accent-green); font-size: 13px; font-weight: 600; }
+  .widget-finance .sparkline-container { margin-top: 8px; height: 32px; }
+
+  /* Calendar */
+  .widget-calendar .widget-icon { background: rgba(167,139,250,0.12); color: var(--accent-purple); }
+  .widget-calendar .event-time { font-size: 18px; font-weight: 700; color: var(--accent-purple); font-family: 'JetBrains Mono', monospace; }
+  .widget-calendar .event-title { font-size: 13px; color: var(--text-primary); margin-top: 2px; font-weight: 500; }
+
+  /* Weather */
+  .widget-weather .widget-icon { background: rgba(251,191,36,0.12); color: var(--accent-amber); }
+  .widget-weather .temp { font-size: 28px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+  .widget-weather .condition { font-size: 12px; color: var(--text-secondary); }
+
+  /* Messages */
+  .widget-messages .widget-icon { background: rgba(52,211,153,0.12); color: var(--accent-green); }
+  .widget-messages .badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: var(--accent-red);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 10px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Hiro */
+  .widget-hiro {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16162a 100%);
+    border-color: rgba(74,158,255,0.15);
+  }
+  .widget-hiro .widget-icon {
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+    color: white;
+  }
+  .widget-hiro .hiro-rings {
+    position: absolute;
+    top: 50%;
+    right: 16px;
+    transform: translateY(-50%);
+    width: 48px;
+    height: 48px;
+  }
+  .hiro-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid rgba(74,158,255,0.2);
+    animation: hiro-pulse 3s ease-in-out infinite;
+  }
+  .hiro-ring:nth-child(1) { inset: 0; animation-delay: 0s; }
+  .hiro-ring:nth-child(2) { inset: -6px; animation-delay: 0.5s; }
+  .hiro-ring:nth-child(3) { inset: -12px; animation-delay: 1s; }
+
+  @keyframes hiro-pulse {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.05); }
+  }
+
+  /* Notes */
+  .widget-notes .widget-icon { background: rgba(34,211,238,0.12); color: var(--accent-cyan); }
+  .widget-notes .note-preview {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Mini sparkline canvas */
+  .sparkline-canvas {
+    width: 100%;
+    height: 32px;
+  }
+
+  /* ── Chat Section ── */
+  .chat-section {
+    padding: 0 16px;
+  }
+
+  .chat-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 4px 12px;
+  }
+
+  .chat-divider::before,
+  .chat-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .chat-divider span {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .chat-messages {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-bottom: 8px;
+  }
+
+  /* Chat bubbles */
+  .chat-msg {
+    max-width: 88%;
+    animation: msg-in 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes msg-in {
+    from { opacity: 0; transform: translateY(12px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .chat-msg.user {
+    align-self: flex-end;
+  }
+
+  .chat-msg.user .bubble {
+    background: var(--accent-blue);
+    color: white;
+    border-radius: var(--radius) var(--radius) 4px var(--radius);
+    padding: 10px 14px;
+    font-size: 14px;
+    line-height: 1.45;
+  }
+
+  .chat-msg.agent {
+    align-self: flex-start;
+  }
+
+  .chat-msg.agent .bubble {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius) var(--radius) var(--radius) 4px;
+    padding: 12px 14px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text-primary);
+  }
+
+  .chat-msg .agent-label {
+    font-size: 11px;
+    color: var(--accent-blue);
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .chat-msg .agent-label::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent-blue);
+    display: inline-block;
+  }
+
+  /* ── Embedded UI Cards ── */
+  .card-embed {
+    margin-top: 10px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+  }
+
+  /* Stock chart card */
+  .stock-card-header {
+    padding: 12px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .stock-ticker {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 15px;
+  }
+
+  .stock-price {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: var(--accent-green);
+    font-weight: 600;
+  }
+
+  .stock-chart-area {
+    padding: 8px 14px 14px;
+    height: 100px;
+    position: relative;
+  }
+
+  .stock-chart-canvas {
+    width: 100%;
+    height: 100%;
+  }
+
+  .stock-meta {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 14px 10px;
+    font-size: 11px;
+    color: var(--text-tertiary);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Calendar card */
+  .cal-card {
+    padding: 14px;
+  }
+
+  .cal-card-event {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .cal-card-event:last-child { border-bottom: none; }
+
+  .cal-time-block {
+    min-width: 48px;
+    text-align: center;
+    padding: 6px 0;
+    border-radius: var(--radius-xs);
+    background: rgba(167,139,250,0.1);
+  }
+
+  .cal-time-block .time {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent-purple);
+  }
+
+  .cal-time-block .period {
+    font-size: 10px;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+  }
+
+  .cal-event-info h4 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .cal-event-info p {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+
+  .cal-event-info .cal-tag {
+    display: inline-block;
+    margin-top: 4px;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: rgba(167,139,250,0.12);
+    color: var(--accent-purple);
+    font-weight: 500;
+  }
+
+  /* Weather card */
+  .weather-card {
+    padding: 14px;
+  }
+
+  .weather-card-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .weather-card-temp {
+    font-size: 36px;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: -1px;
+  }
+
+  .weather-card-icon {
+    font-size: 40px;
+    line-height: 1;
+  }
+
+  .weather-card-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+  }
+
+  .weather-detail {
+    text-align: center;
+    padding: 8px;
+    border-radius: var(--radius-xs);
+    background: rgba(255,255,255,0.03);
+  }
+
+  .weather-detail .wd-label {
+    font-size: 10px;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .weather-detail .wd-value {
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+    margin-top: 2px;
+  }
+
+  /* Messages card */
+  .msg-card {
+    padding: 6px 14px;
+  }
+
+  .msg-card-item {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .msg-card-item:last-child { border-bottom: none; }
+
+  .msg-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  .msg-card-info { flex: 1; min-width: 0; }
+
+  .msg-card-info h4 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .msg-card-info p {
+    font-size: 12px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .msg-time {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    font-family: 'JetBrains Mono', monospace;
+    flex-shrink: 0;
+  }
+
+  /* Notes card */
+  .notes-card {
+    padding: 14px;
+  }
+
+  .note-item {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .note-item:last-child { border-bottom: none; }
+
+  .note-item h4 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .note-item p {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+    line-height: 1.4;
+  }
+
+  .note-item .note-date {
+    font-size: 10px;
+    color: var(--text-tertiary);
+    margin-top: 4px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ── Typing indicator ── */
+  .typing-indicator {
+    display: flex;
+    gap: 4px;
+    padding: 8px 0;
+    align-items: center;
+  }
+
+  .typing-indicator .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--text-tertiary);
+    animation: typing-bounce 1.4s ease-in-out infinite;
+  }
+
+  .typing-indicator .dot:nth-child(2) { animation-delay: 0.2s; }
+  .typing-indicator .dot:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes typing-bounce {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+    30% { transform: translateY(-6px); opacity: 1; }
+  }
+
+  /* ── Sticky Input Bar ── */
+  .input-bar {
+    padding: 8px 16px;
+    padding-bottom: calc(12px + var(--safe-bottom));
+    background: var(--bg-primary);
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .input-bar::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    left: 0;
+    right: 0;
+    height: 20px;
+    background: linear-gradient(to top, var(--bg-primary), transparent);
+    pointer-events: none;
+  }
+
+  .input-field {
+    flex: 1;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    padding: 10px 16px;
+    color: var(--text-primary);
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .input-field:focus {
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 3px var(--glow-blue);
+  }
+
+  .input-field::placeholder {
+    color: var(--text-tertiary);
+  }
+
+  .send-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--accent-blue);
+    border: none;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+
+  .send-btn:active {
+    transform: scale(0.92);
+  }
+
+  .send-btn:disabled {
+    background: var(--bg-card);
+    color: var(--text-tertiary);
+    cursor: default;
+  }
+
+  .send-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* ── Ambient background effects ── */
+  .ambient-glow {
+    position: fixed;
+    top: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(74,158,255,0.06) 0%, transparent 70%);
+    pointer-events: none;
+    animation: ambient-drift 8s ease-in-out infinite;
+    z-index: 0;
+  }
+
+  @keyframes ambient-drift {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    33% { transform: translateX(-40%) translateY(20px); }
+    66% { transform: translateX(-60%) translateY(-10px); }
+  }
+
+  /* ── Ticker tape animation on finance ── */
+  .ticker-tape {
+    display: flex;
+    gap: 16px;
+    overflow: hidden;
+    margin-top: 6px;
+  }
+
+  .ticker-item {
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    white-space: nowrap;
+    color: var(--text-tertiary);
+    animation: ticker-scroll 20s linear infinite;
+  }
+
+  @keyframes ticker-scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-100%); }
+  }
+
+  /* Quick action chips */
+  .quick-chips {
+    display: flex;
+    gap: 8px;
+    padding: 4px 16px 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .quick-chips::-webkit-scrollbar { display: none; }
+
+  .chip {
+    padding: 6px 14px;
+    border-radius: 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .chip:active {
+    background: var(--bg-card-hover);
+    border-color: var(--accent-blue);
+    color: var(--accent-blue);
+    transform: scale(0.96);
+  }
+
+  /* ── Live clock ── */
+  .live-clock {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-tertiary);
+    font-weight: 400;
+  }
+</style>
+</head>
+<body>
+
+<div class="ambient-glow"></div>
+
+<div class="app-container">
+  <div class="scroll-area" id="scrollArea">
+
+    <!-- Header -->
+    <div class="header">
+      <div class="header-left">
+        <h1>Hiro</h1>
+        <div class="greeting" id="greeting">Good morning, Jane</div>
+      </div>
+      <div class="header-right">
+        <span class="live-clock" id="liveClock"></span>
+        <div class="status-dot"></div>
+        <div class="header-btn" onclick="handleCommand('settings')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.32 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Widget Grid -->
+    <div class="widget-grid">
+
+      <!-- Finance Widget -->
+      <div class="widget widget-finance" onclick="triggerWidget('finance')">
+        <div class="widget-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+        </div>
+        <div class="widget-label">Portfolio</div>
+        <div class="widget-value">$48.2K</div>
+        <div class="widget-sub"><span class="change-up">+2.4%</span> today</div>
+        <div class="sparkline-container">
+          <canvas class="sparkline-canvas" id="sparkFinance"></canvas>
+        </div>
+      </div>
+
+      <!-- Calendar Widget -->
+      <div class="widget widget-calendar" onclick="triggerWidget('calendar')">
+        <div class="widget-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <div class="widget-label">Next Event</div>
+        <div class="event-time">10:30</div>
+        <div class="event-title">Design Review</div>
+        <div class="widget-sub">in 47 min</div>
+      </div>
+
+      <!-- Weather Widget -->
+      <div class="widget widget-weather" onclick="triggerWidget('weather')">
+        <div class="widget-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 18a5 5 0 0 0-3.2-8.8A5.5 5.5 0 0 0 3 12.3 4 4 0 0 0 4 20h13"/><line x1="17" y1="7" x2="17" y2="1"/><line x1="20.3" y1="3.7" x2="22" y2="2"/><line x1="23" y1="7" x2="21" y2="7"/></svg>
+        </div>
+        <div class="widget-label">Weather</div>
+        <div class="temp">72<span style="font-size:14px;color:var(--text-tertiary)">°F</span></div>
+        <div class="condition">Partly Cloudy</div>
+      </div>
+
+      <!-- Messages Widget -->
+      <div class="widget widget-messages" onclick="triggerWidget('messages')">
+        <div class="badge">3</div>
+        <div class="widget-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <div class="widget-label">Messages</div>
+        <div class="widget-value" style="font-size:18px">3 unread</div>
+        <div class="widget-sub">Sarah, Team, Alex</div>
+      </div>
+
+      <!-- Hiro AI Widget -->
+      <div class="widget widget-hiro" onclick="triggerWidget('hiro')">
+        <div class="widget-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v2a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M16 14H8a4 4 0 0 0-4 4v2h16v-2a4 4 0 0 0-4-4z"/></svg>
+        </div>
+        <div class="widget-label">Hiro AI</div>
+        <div class="widget-sub" style="color:var(--accent-blue);font-weight:500">Ready to assist</div>
+        <div class="hiro-rings">
+          <div class="hiro-ring"></div>
+          <div class="hiro-ring"></div>
+          <div class="hiro-ring"></div>
+        </div>
+      </div>
+
+      <!-- Notes Widget -->
+      <div class="widget widget-notes" onclick="triggerWidget('notes')">
+        <div class="widget-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </div>
+        <div class="widget-label">Notes</div>
+        <div class="widget-value" style="font-size:16px">4 notes</div>
+        <div class="note-preview">API refactor plan, meeting notes...</div>
+      </div>
+
+    </div>
+
+    <!-- Quick Action Chips -->
+    <div class="quick-chips">
+      <div class="chip" onclick="handleChip('Summarize my day')">Summarize my day</div>
+      <div class="chip" onclick="handleChip('Show portfolio')">Show portfolio</div>
+      <div class="chip" onclick="handleChip('Draft an email')">Draft an email</div>
+      <div class="chip" onclick="handleChip('Set a reminder')">Set a reminder</div>
+    </div>
+
+    <!-- Chat Section -->
+    <div class="chat-section">
+      <div class="chat-divider"><span>Conversation</span></div>
+      <div class="chat-messages" id="chatMessages">
+        <!-- Messages injected here -->
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Sticky Input Bar -->
+  <div class="input-bar">
+    <input
+      class="input-field"
+      id="chatInput"
+      type="text"
+      placeholder="Ask Hiro anything..."
+      autocomplete="off"
+    />
+    <button class="send-btn" id="sendBtn" onclick="sendMessage()" disabled>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+// ── Sample Data ──
+const DATA = {
+  portfolio: {
+    total: 48237.41,
+    change: +2.4,
+    holdings: [
+      { ticker: 'NVDA', price: 892.34, change: +4.2, shares: 12 },
+      { ticker: 'AAPL', price: 189.72, change: +0.8, shares: 25 },
+      { ticker: 'TSLA', price: 248.91, change: -1.3, shares: 8 },
+      { ticker: 'MSFT', price: 412.56, change: +1.1, shares: 15 },
+    ],
+    sparkline: [42,44,43,45,44,46,45,47,46,48,47,49,48,50,49,48,50,51,49,52,51,53,52,48]
+  },
+  calendar: [
+    { time: '10:30', period: 'AM', title: 'Design Review', subtitle: 'Figma walkthrough with team', tag: 'Design', duration: '45 min' },
+    { time: '1:00', period: 'PM', title: 'Standup', subtitle: 'Sprint 14 daily sync', tag: 'Engineering', duration: '15 min' },
+    { time: '3:30', period: 'PM', title: '1:1 with Sarah', subtitle: 'Q1 performance review prep', tag: 'Management', duration: '30 min' },
+  ],
+  weather: {
+    temp: 72,
+    condition: 'Partly Cloudy',
+    icon: '\u26C5',
+    humidity: 54,
+    wind: 8,
+    uv: 6,
+    high: 78,
+    low: 61,
+  },
+  messages: [
+    { from: 'Sarah Chen', avatar: 'SC', color: '#a78bfa', preview: 'Can we move the 1:1 to 4pm?', time: '9:12a' },
+    { from: 'Team Design', avatar: 'TD', color: '#4a9eff', preview: 'New mockups uploaded to Figma', time: '8:45a' },
+    { from: 'Alex Rivera', avatar: 'AR', color: '#34d399', preview: 'PR approved \u2014 ready to merge', time: '8:20a' },
+  ],
+  notes: [
+    { title: 'API Refactor Plan', body: 'Migrate to v3 endpoints. Deprecate legacy auth flow by Q2. Need to update SDK wrappers.', date: 'Today, 8:30 AM' },
+    { title: 'Meeting Notes \u2014 Product', body: 'Agreed on timeline for beta launch. Key risk: third-party integrations.', date: 'Yesterday' },
+    { title: 'Ideas: Agent UX', body: 'Explore proactive suggestions, contextual cards, ambient notifications.', date: 'Feb 22' },
+    { title: 'Reading List', body: 'Attention Is All You Need, Scaling Laws, RLHF paper.', date: 'Feb 20' },
+  ],
+};
+
+// ── Helpers ──
+function getGreeting() {
+  const h = new Date().getHours();
+  if (h < 12) return 'Good morning, Jane';
+  if (h < 17) return 'Good afternoon, Jane';
+  return 'Good evening, Jane';
+}
+
+function updateClock() {
+  const now = new Date();
+  const t = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+  document.getElementById('liveClock').textContent = t;
+}
+
+function scrollToBottom() {
+  const area = document.getElementById('scrollArea');
+  requestAnimationFrame(() => {
+    area.scrollTo({ top: area.scrollHeight, behavior: 'smooth' });
+  });
+}
+
+// ── Sparkline renderer ──
+function drawSparkline(canvasId, data, color = '#4a9eff') {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  ctx.scale(dpr, dpr);
+
+  const w = rect.width;
+  const h = rect.height;
+  const min = Math.min(...data);
+  const max = Math.max(...data);
+  const range = max - min || 1;
+  const step = w / (data.length - 1);
+
+  // Gradient fill
+  const gradient = ctx.createLinearGradient(0, 0, 0, h);
+  gradient.addColorStop(0, color + '30');
+  gradient.addColorStop(1, 'transparent');
+
+  ctx.beginPath();
+  ctx.moveTo(0, h - ((data[0] - min) / range) * h * 0.85);
+  for (let i = 1; i < data.length; i++) {
+    const x = i * step;
+    const y = h - ((data[i] - min) / range) * h * 0.85;
+    const xc = (x + (i - 1) * step) / 2;
+    const yp = h - ((data[i - 1] - min) / range) * h * 0.85;
+    ctx.quadraticCurveTo((i - 1) * step, yp, xc, (yp + y) / 2);
+  }
+  const lastX = (data.length - 1) * step;
+  const lastY = h - ((data[data.length - 1] - min) / range) * h * 0.85;
+  ctx.lineTo(lastX, lastY);
+
+  // Stroke
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // Fill
+  ctx.lineTo(lastX, h);
+  ctx.lineTo(0, h);
+  ctx.closePath();
+  ctx.fillStyle = gradient;
+  ctx.fill();
+
+  // Glow dot at end
+  ctx.beginPath();
+  ctx.arc(lastX, lastY, 3, 0, Math.PI * 2);
+  ctx.fillStyle = color;
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(lastX, lastY, 6, 0, Math.PI * 2);
+  ctx.fillStyle = color + '30';
+  ctx.fill();
+}
+
+// ── Chat Engine ──
+const chatMessages = document.getElementById('chatMessages');
+const chatInput = document.getElementById('chatInput');
+const sendBtn = document.getElementById('sendBtn');
+
+chatInput.addEventListener('input', () => {
+  sendBtn.disabled = chatInput.value.trim() === '';
+});
+
+chatInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && chatInput.value.trim()) sendMessage();
+});
+
+function addUserMessage(text) {
+  const msg = document.createElement('div');
+  msg.className = 'chat-msg user';
+  msg.innerHTML = `<div class="bubble">${escapeHtml(text)}</div>`;
+  chatMessages.appendChild(msg);
+  scrollToBottom();
+}
+
+function addAgentMessage(html, cardHtml = '') {
+  const msg = document.createElement('div');
+  msg.className = 'chat-msg agent';
+  msg.innerHTML = `
+    <div class="agent-label">Hiro</div>
+    <div class="bubble">${html}${cardHtml ? `<div class="card-embed">${cardHtml}</div>` : ''}</div>
+  `;
+  chatMessages.appendChild(msg);
+  scrollToBottom();
+
+  // Render any charts in the new card
+  setTimeout(() => {
+    const chartCanvas = msg.querySelector('.stock-chart-canvas');
+    if (chartCanvas) drawStockChart(chartCanvas);
+  }, 50);
+}
+
+function showTyping() {
+  const el = document.createElement('div');
+  el.className = 'chat-msg agent';
+  el.id = 'typingIndicator';
+  el.innerHTML = `
+    <div class="agent-label">Hiro</div>
+    <div class="bubble">
+      <div class="typing-indicator">
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+    </div>
+  `;
+  chatMessages.appendChild(el);
+  scrollToBottom();
+}
+
+function removeTyping() {
+  const el = document.getElementById('typingIndicator');
+  if (el) el.remove();
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+// ── Stock Chart (larger, for card) ──
+function drawStockChart(canvas) {
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  ctx.scale(dpr, dpr);
+
+  const w = rect.width;
+  const h = rect.height;
+  const data = [880,884,878,882,886,890,885,888,892,889,893,896,891,888,892,895,890,894,892];
+  const min = Math.min(...data) - 2;
+  const max = Math.max(...data) + 2;
+  const range = max - min;
+  const step = w / (data.length - 1);
+
+  // Grid lines
+  ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i < 4; i++) {
+    const y = (h / 4) * i;
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(w, y);
+    ctx.stroke();
+  }
+
+  // Chart line
+  const gradient = ctx.createLinearGradient(0, 0, 0, h);
+  gradient.addColorStop(0, 'rgba(52,211,153,0.2)');
+  gradient.addColorStop(1, 'transparent');
+
+  ctx.beginPath();
+  data.forEach((val, i) => {
+    const x = i * step;
+    const y = h - ((val - min) / range) * h * 0.9;
+    if (i === 0) ctx.moveTo(x, y);
+    else {
+      const prevX = (i - 1) * step;
+      const prevY = h - ((data[i-1] - min) / range) * h * 0.9;
+      const cpX = (prevX + x) / 2;
+      ctx.bezierCurveTo(cpX, prevY, cpX, y, x, y);
+    }
+  });
+
+  ctx.strokeStyle = '#34d399';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Fill
+  const lastX = (data.length - 1) * step;
+  ctx.lineTo(lastX, h);
+  ctx.lineTo(0, h);
+  ctx.closePath();
+  ctx.fillStyle = gradient;
+  ctx.fill();
+}
+
+// ── Response Generators ──
+function getFinanceResponse() {
+  const d = DATA.portfolio;
+  const holdingsHtml = d.holdings.map(h => `
+    <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)">
+      <span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px">${h.ticker}</span>
+      <span style="font-size:13px;color:var(--text-secondary)">${h.shares} shares</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:13px">$${h.price.toFixed(2)}</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:${h.change >= 0 ? 'var(--accent-green)' : 'var(--accent-red)'}">${h.change >= 0 ? '+' : ''}${h.change}%</span>
+    </div>
+  `).join('');
+
+  const card = `
+    <div class="stock-card-header">
+      <span class="stock-ticker">NVDA</span>
+      <span class="stock-price">$892.34 <span style="font-size:11px;opacity:0.7">+4.2%</span></span>
+    </div>
+    <div class="stock-chart-area"><canvas class="stock-chart-canvas"></canvas></div>
+    <div class="stock-meta"><span>9:30 AM</span><span>1D</span><span>Now</span></div>
+    <div style="padding:4px 14px 10px">${holdingsHtml}</div>
+  `;
+
+  return {
+    text: `Your portfolio is at <strong>$${d.total.toLocaleString()}</strong>, up <strong style="color:var(--accent-green)">+${d.change}%</strong> today. NVDA is leading with +4.2%. Here's the breakdown:`,
+    card
+  };
+}
+
+function getCalendarResponse() {
+  const events = DATA.calendar.map(e => `
+    <div class="cal-card-event">
+      <div class="cal-time-block">
+        <div class="time">${e.time}</div>
+        <div class="period">${e.period}</div>
+      </div>
+      <div class="cal-event-info">
+        <h4>${e.title}</h4>
+        <p>${e.subtitle} \u00B7 ${e.duration}</p>
+        <span class="cal-tag">${e.tag}</span>
+      </div>
+    </div>
+  `).join('');
+
+  return {
+    text: `You have <strong>3 events</strong> today. Your next meeting is <strong>Design Review</strong> at 10:30 AM \u2014 starting in about 47 minutes.`,
+    card: `<div class="cal-card">${events}</div>`
+  };
+}
+
+function getWeatherResponse() {
+  const w = DATA.weather;
+  return {
+    text: `Currently <strong>${w.temp}\u00B0F</strong> and ${w.condition.toLowerCase()} in San Francisco. High of ${w.high}\u00B0, low of ${w.low}\u00B0.`,
+    card: `
+      <div class="weather-card">
+        <div class="weather-card-main">
+          <div>
+            <div class="weather-card-temp">${w.temp}\u00B0<span style="font-size:18px;color:var(--text-tertiary)">F</span></div>
+            <div style="font-size:13px;color:var(--text-secondary)">${w.condition}</div>
+          </div>
+          <div class="weather-card-icon">${w.icon}</div>
+        </div>
+        <div class="weather-card-details">
+          <div class="weather-detail"><div class="wd-label">Humidity</div><div class="wd-value">${w.humidity}%</div></div>
+          <div class="weather-detail"><div class="wd-label">Wind</div><div class="wd-value">${w.wind}mph</div></div>
+          <div class="weather-detail"><div class="wd-label">UV</div><div class="wd-value">${w.uv}</div></div>
+        </div>
+      </div>
+    `
+  };
+}
+
+function getMessagesResponse() {
+  const msgs = DATA.messages.map(m => `
+    <div class="msg-card-item">
+      <div class="msg-avatar" style="background:${m.color}22;color:${m.color}">${m.avatar}</div>
+      <div class="msg-card-info">
+        <h4>${m.from}</h4>
+        <p>${m.preview}</p>
+      </div>
+      <span class="msg-time">${m.time}</span>
+    </div>
+  `).join('');
+
+  return {
+    text: `You have <strong>3 unread messages</strong>. Sarah is asking about rescheduling, the design team shared new mockups, and Alex's PR is ready.`,
+    card: `<div class="msg-card">${msgs}</div>`
+  };
+}
+
+function getHiroResponse() {
+  return {
+    text: `Hey Jane! I'm Hiro, your AI assistant. I can help you with:\n\n\u2022 <strong>Portfolio & market data</strong> \u2014 real-time insights\n\u2022 <strong>Calendar management</strong> \u2014 schedule, reschedule, prep\n\u2022 <strong>Communications</strong> \u2014 draft, summarize, prioritize\n\u2022 <strong>Research & notes</strong> \u2014 capture ideas, find info\n\nWhat would you like to work on?`,
+    card: ''
+  };
+}
+
+function getNotesResponse() {
+  const notes = DATA.notes.map(n => `
+    <div class="note-item">
+      <h4>${n.title}</h4>
+      <p>${n.body}</p>
+      <div class="note-date">${n.date}</div>
+    </div>
+  `).join('');
+
+  return {
+    text: `You have <strong>4 notes</strong>. Most recent is your API refactor plan from this morning.`,
+    card: `<div class="notes-card">${notes}</div>`
+  };
+}
+
+function getSummaryResponse() {
+  return {
+    text: `Here's your day at a glance:\n\n\u2022 <strong>Portfolio</strong>: $48.2K (+2.4%) \u2014 NVDA leading\n\u2022 <strong>Calendar</strong>: 3 events, next in 47 min\n\u2022 <strong>Messages</strong>: 3 unread \u2014 Sarah wants to reschedule\n\u2022 <strong>Weather</strong>: 72\u00B0F, partly cloudy\n\nLooks like a productive day ahead. Want me to prep anything for your Design Review?`,
+    card: ''
+  };
+}
+
+function getGenericResponse(text) {
+  const responses = [
+    `I'll look into that for you. Let me process "${text}" and get back to you with some options.`,
+    `Got it. I'm working on "${text}" now. Give me just a moment to pull the relevant data.`,
+    `Interesting request! Let me analyze "${text}" and prepare a response for you.`,
+  ];
+  return {
+    text: responses[Math.floor(Math.random() * responses.length)],
+    card: ''
+  };
+}
+
+// ── Widget Trigger ──
+function triggerWidget(type) {
+  const labels = {
+    finance: 'Show my portfolio',
+    calendar: 'What\'s on my calendar?',
+    weather: 'How\'s the weather?',
+    messages: 'Show my messages',
+    hiro: 'Hey Hiro, what can you do?',
+    notes: 'Show my notes',
+  };
+
+  const query = labels[type];
+  addUserMessage(query);
+
+  showTyping();
+  const delay = 600 + Math.random() * 800;
+
+  setTimeout(() => {
+    removeTyping();
+    let response;
+    switch (type) {
+      case 'finance': response = getFinanceResponse(); break;
+      case 'calendar': response = getCalendarResponse(); break;
+      case 'weather': response = getWeatherResponse(); break;
+      case 'messages': response = getMessagesResponse(); break;
+      case 'hiro': response = getHiroResponse(); break;
+      case 'notes': response = getNotesResponse(); break;
+      default: response = getGenericResponse(query);
+    }
+    addAgentMessage(response.text, response.card);
+  }, delay);
+}
+
+// ── Send message ──
+function sendMessage() {
+  const text = chatInput.value.trim();
+  if (!text) return;
+
+  chatInput.value = '';
+  sendBtn.disabled = true;
+  addUserMessage(text);
+
+  showTyping();
+  const delay = 700 + Math.random() * 900;
+
+  setTimeout(() => {
+    removeTyping();
+    const lower = text.toLowerCase();
+    let response;
+
+    if (lower.includes('portfolio') || lower.includes('stock') || lower.includes('finance') || lower.includes('market')) {
+      response = getFinanceResponse();
+    } else if (lower.includes('calendar') || lower.includes('schedule') || lower.includes('meeting') || lower.includes('event')) {
+      response = getCalendarResponse();
+    } else if (lower.includes('weather') || lower.includes('temperature') || lower.includes('forecast')) {
+      response = getWeatherResponse();
+    } else if (lower.includes('message') || lower.includes('unread') || lower.includes('inbox')) {
+      response = getMessagesResponse();
+    } else if (lower.includes('note') || lower.includes('notes')) {
+      response = getNotesResponse();
+    } else if (lower.includes('summarize') || lower.includes('summary') || lower.includes('my day') || lower.includes('overview')) {
+      response = getSummaryResponse();
+    } else if (lower.includes('hiro') || lower.includes('help') || lower.includes('can you')) {
+      response = getHiroResponse();
+    } else {
+      response = getGenericResponse(text);
+    }
+
+    addAgentMessage(response.text, response.card);
+  }, delay);
+}
+
+function handleChip(text) {
+  chatInput.value = text;
+  sendBtn.disabled = false;
+  sendMessage();
+}
+
+function handleCommand(cmd) {
+  // placeholder for settings etc
+}
+
+// ── Init ──
+document.getElementById('greeting').textContent = getGreeting();
+updateClock();
+setInterval(updateClock, 10000);
+
+// Draw sparkline on finance widget
+setTimeout(() => {
+  drawSparkline('sparkFinance', DATA.portfolio.sparkline, '#4a9eff');
+}, 100);
+
+// Animate widget entry
+document.querySelectorAll('.widget').forEach((w, i) => {
+  w.style.opacity = '0';
+  w.style.transform = 'translateY(16px)';
+  w.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+  setTimeout(() => {
+    w.style.opacity = '1';
+    w.style.transform = 'translateY(0)';
+  }, 80 + i * 60);
+});
+
+// Initial Hiro greeting in chat
+setTimeout(() => {
+  addAgentMessage(
+    `Good to see you, Jane. You have <strong>3 events</strong> today and your portfolio is <strong style="color:var(--accent-green)">up 2.4%</strong>. Tap any widget or ask me anything.`,
+    ''
+  );
+}, 1200);
+
+// Resize handler for sparkline
+window.addEventListener('resize', () => {
+  drawSparkline('sparkFinance', DATA.portfolio.sparkline, '#4a9eff');
+});
+</script>
+
+</body>
+</html>
