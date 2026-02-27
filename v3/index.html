@@ -65,7 +65,7 @@
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
     scroll-behavior: smooth;
-    padding-bottom: 100px;
+    padding-bottom: 16px;
   }
 
   .scroll-area::-webkit-scrollbar { display: none; }
@@ -374,117 +374,227 @@
     background: #e6a821;
   }
 
-  /* ── Quick Ask Bar ── */
-  .quick-ask {
-    padding: 0 20px;
-    margin-bottom: 20px;
+  /* ── Quick action chips ── */
+  .quick-chips {
+    display: flex;
+    gap: 8px;
+    padding: 4px 16px 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
-  .ask-card {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16162a 100%);
-    border: 1px solid rgba(74,158,255,0.15);
-    border-radius: var(--radius);
-    padding: 18px;
-    display: flex;
-    gap: 14px;
-    align-items: center;
+  .quick-chips::-webkit-scrollbar { display: none; }
+
+  .chip {
+    padding: 6px 14px;
+    border-radius: 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text-secondary);
+    white-space: nowrap;
     cursor: pointer;
-    transition: all 0.25s;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
   }
 
-  .ask-card:active {
-    transform: scale(0.98);
+  .chip:active {
+    background: var(--bg-card-hover);
+    border-color: var(--accent-blue);
+    color: var(--accent-blue);
+    transform: scale(0.96);
   }
 
-  .ask-icon {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
-    background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+  /* ── Chat Section ── */
+  .chat-section {
+    padding: 0 16px;
+  }
+
+  .chat-divider {
     display: flex;
     align-items: center;
-    justify-content: center;
-    font-size: 20px;
+    gap: 12px;
+    padding: 16px 4px 12px;
+  }
+
+  .chat-divider::before,
+  .chat-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .chat-divider span {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .chat-messages {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-bottom: 8px;
+  }
+
+  /* Chat bubbles */
+  .chat-msg {
+    max-width: 88%;
+    animation: msg-in 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes msg-in {
+    from { opacity: 0; transform: translateY(12px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .chat-msg.user {
+    align-self: flex-end;
+  }
+
+  .chat-msg.user .bubble {
+    background: var(--accent-blue);
+    color: white;
+    border-radius: var(--radius) var(--radius) 4px var(--radius);
+    padding: 10px 14px;
+    font-size: 14px;
+    line-height: 1.45;
+  }
+
+  .chat-msg.agent {
+    align-self: flex-start;
+  }
+
+  .chat-msg.agent .bubble {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius) var(--radius) var(--radius) 4px;
+    padding: 12px 14px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text-primary);
+  }
+
+  .chat-msg .agent-label {
+    font-size: 11px;
+    color: var(--accent-blue);
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .chat-msg .agent-label::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent-blue);
+    display: inline-block;
+  }
+
+  /* ── Typing indicator ── */
+  .typing-indicator {
+    display: flex;
+    gap: 4px;
+    padding: 8px 0;
+    align-items: center;
+  }
+
+  .typing-indicator .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--text-tertiary);
+    animation: typing-bounce 1.4s ease-in-out infinite;
+  }
+
+  .typing-indicator .dot:nth-child(2) { animation-delay: 0.2s; }
+  .typing-indicator .dot:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes typing-bounce {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+    30% { transform: translateY(-6px); opacity: 1; }
+  }
+
+  /* ── Sticky Input Bar ── */
+  .input-bar {
+    padding: 8px 16px;
+    padding-bottom: calc(12px + var(--safe-bottom));
+    background: var(--bg-primary);
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-shrink: 0;
     position: relative;
   }
 
-  .ask-rings {
+  .input-bar::before {
+    content: '';
     position: absolute;
-    inset: -8px;
+    top: -20px;
+    left: 0;
+    right: 0;
+    height: 20px;
+    background: linear-gradient(to top, var(--bg-primary), transparent);
     pointer-events: none;
   }
 
-  .ask-ring {
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    border: 1px solid rgba(74,158,255,0.2);
-    animation: ring-pulse 2.5s ease-in-out infinite;
-  }
-
-  .ask-ring:nth-child(2) { inset: -4px; animation-delay: 0.3s; }
-  .ask-ring:nth-child(3) { inset: -8px; animation-delay: 0.6s; }
-
-  @keyframes ring-pulse {
-    0%, 100% { opacity: 0.3; transform: scale(1); }
-    50% { opacity: 0.7; transform: scale(1.02); }
-  }
-
-  .ask-content h3 {
-    font-size: 15px;
-    font-weight: 600;
+  .input-field {
+    flex: 1;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    padding: 10px 16px;
     color: var(--text-primary);
-    margin-bottom: 2px;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
   }
 
-  .ask-content p {
-    font-size: 13px;
-    color: var(--text-secondary);
+  .input-field:focus {
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 3px var(--glow-blue);
   }
 
-  .ask-arrow {
-    margin-left: auto;
+  .input-field::placeholder {
     color: var(--text-tertiary);
-    font-size: 20px;
   }
 
-  /* ── Bottom Nav ── */
-  .bottom-nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    max-width: 430px;
-    margin: 0 auto;
-    background: var(--bg-primary);
-    border-top: 1px solid var(--border);
-    padding: 10px 0;
-    padding-bottom: calc(10px + var(--safe-bottom));
+  .send-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--accent-blue);
+    border: none;
+    color: white;
     display: flex;
-    justify-content: space-around;
-    z-index: 100;
-  }
-
-  .nav-item {
-    display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 4px;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+
+  .send-btn:active {
+    transform: scale(0.92);
+  }
+
+  .send-btn:disabled {
+    background: var(--bg-card);
     color: var(--text-tertiary);
-    text-decoration: none;
-    font-size: 10px;
-    font-weight: 500;
-    padding: 4px 12px;
-    transition: color 0.2s;
+    cursor: default;
   }
 
-  .nav-item.active {
-    color: var(--accent-blue);
-  }
-
-  .nav-icon {
-    font-size: 22px;
-    line-height: 1;
+  .send-btn svg {
+    width: 18px;
+    height: 18px;
   }
 
   /* ── Ambient glow ── */
@@ -528,7 +638,7 @@
 <div class="ambient-glow"></div>
 
 <div class="app-container">
-  <div class="scroll-area">
+  <div class="scroll-area" id="scrollArea">
 
     <!-- Header -->
     <div class="header">
@@ -541,25 +651,6 @@
         <div class="header-btn">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.32 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
         </div>
-      </div>
-    </div>
-
-    <!-- Ask Hiro -->
-    <div class="quick-ask">
-      <div class="ask-card" onclick="openChat()">
-        <div class="ask-icon">
-          💬
-          <div class="ask-rings">
-            <div class="ask-ring"></div>
-            <div class="ask-ring"></div>
-            <div class="ask-ring"></div>
-          </div>
-        </div>
-        <div class="ask-content">
-          <h3>Ask Hiro Anything</h3>
-          <p>Get help with any financial question</p>
-        </div>
-        <span class="ask-arrow">→</span>
       </div>
     </div>
 
@@ -712,30 +803,41 @@
       </div>
     </div>
 
+    <!-- Quick Action Chips -->
+    <div class="quick-chips">
+      <div class="chip" onclick="handleChip('How am I doing?')">How am I doing?</div>
+      <div class="chip" onclick="handleChip('Show my portfolio')">Show my portfolio</div>
+      <div class="chip" onclick="handleChip('Upcoming bills')">Upcoming bills</div>
+      <div class="chip" onclick="handleChip('Track a stock')">Track a stock</div>
+    </div>
+
+    <!-- Chat Section -->
+    <div class="chat-section">
+      <div class="chat-divider"><span>Conversation</span></div>
+      <div class="chat-messages" id="chatMessages">
+        <!-- Messages injected here -->
+      </div>
+    </div>
+
   </div>
 
-  <!-- Bottom Nav -->
-  <div class="bottom-nav">
-    <a href="#" class="nav-item active">
-      <span class="nav-icon">✓</span>
-      <span>Tasks</span>
-    </a>
-    <a href="index.html" class="nav-item">
-      <span class="nav-icon">📊</span>
-      <span>Dashboard</span>
-    </a>
-    <a href="#" class="nav-item">
-      <span class="nav-icon">💬</span>
-      <span>Chat</span>
-    </a>
-    <a href="#" class="nav-item">
-      <span class="nav-icon">⚙️</span>
-      <span>Settings</span>
-    </a>
+  <!-- Sticky Input Bar -->
+  <div class="input-bar">
+    <input
+      class="input-field"
+      id="chatInput"
+      type="text"
+      placeholder="Ask Hiro anything..."
+      autocomplete="off"
+    />
+    <button class="send-btn" id="sendBtn" onclick="sendMessage()" disabled>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
   </div>
 </div>
 
 <script>
+// ── Task card toggle ──
 function toggleTask(card) {
   const wasExpanded = card.classList.contains('expanded');
   
@@ -747,26 +849,138 @@ function toggleTask(card) {
   // Toggle this one
   if (!wasExpanded) {
     card.classList.add('expanded');
-    
-    // Scroll card into view if needed
     setTimeout(() => {
       card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }, 50);
   }
 }
 
-function openChat() {
-  // Would navigate to chat view
-  alert('Opening chat with Hiro...');
-}
-
 // Prevent button clicks from toggling card
 document.querySelectorAll('.start-btn').forEach(btn => {
   btn.addEventListener('click', (e) => {
     e.stopPropagation();
-    alert('Starting task flow...');
+    const taskTitle = btn.closest('.task-card').querySelector('.task-title').textContent;
+    addUserMessage(`Start: ${taskTitle}`);
+    showTyping();
+    setTimeout(() => {
+      removeTyping();
+      addAgentMessage(`Great! Let's work on <strong>${taskTitle}</strong>. I'll guide you through each step. Ready to begin?`);
+    }, 800);
   });
 });
+
+// ── Chat Engine ──
+const chatMessages = document.getElementById('chatMessages');
+const chatInput = document.getElementById('chatInput');
+const sendBtn = document.getElementById('sendBtn');
+const scrollArea = document.getElementById('scrollArea');
+
+chatInput.addEventListener('input', () => {
+  sendBtn.disabled = chatInput.value.trim() === '';
+});
+
+chatInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && chatInput.value.trim()) sendMessage();
+});
+
+function scrollToBottom() {
+  requestAnimationFrame(() => {
+    scrollArea.scrollTo({ top: scrollArea.scrollHeight, behavior: 'smooth' });
+  });
+}
+
+function addUserMessage(text) {
+  const msg = document.createElement('div');
+  msg.className = 'chat-msg user';
+  msg.innerHTML = `<div class="bubble">${escapeHtml(text)}</div>`;
+  chatMessages.appendChild(msg);
+  scrollToBottom();
+}
+
+function addAgentMessage(html) {
+  const msg = document.createElement('div');
+  msg.className = 'chat-msg agent';
+  msg.innerHTML = `
+    <div class="agent-label">Hiro</div>
+    <div class="bubble">${html}</div>
+  `;
+  chatMessages.appendChild(msg);
+  scrollToBottom();
+}
+
+function showTyping() {
+  const el = document.createElement('div');
+  el.className = 'chat-msg agent';
+  el.id = 'typingIndicator';
+  el.innerHTML = `
+    <div class="agent-label">Hiro</div>
+    <div class="bubble">
+      <div class="typing-indicator">
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+    </div>
+  `;
+  chatMessages.appendChild(el);
+  scrollToBottom();
+}
+
+function removeTyping() {
+  const el = document.getElementById('typingIndicator');
+  if (el) el.remove();
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function sendMessage() {
+  const text = chatInput.value.trim();
+  if (!text) return;
+
+  chatInput.value = '';
+  sendBtn.disabled = true;
+  addUserMessage(text);
+
+  showTyping();
+  const delay = 700 + Math.random() * 900;
+
+  setTimeout(() => {
+    removeTyping();
+    const lower = text.toLowerCase();
+    let response;
+
+    if (lower.includes('portfolio') || lower.includes('investment')) {
+      response = `Your portfolio is at <strong>$127,384</strong>, up <strong style="color:var(--accent-green)">+1.8%</strong> today. Want me to run a health check to see if you need to rebalance?`;
+    } else if (lower.includes('bill') || lower.includes('due') || lower.includes('upcoming')) {
+      response = `You have <strong>2 bills</strong> coming up: credit card payment due <strong>Mar 1</strong> ($2,180) and estimated taxes due <strong>Mar 15</strong>. Want me to set up reminders?`;
+    } else if (lower.includes('how am i') || lower.includes('doing') || lower.includes('summary')) {
+      response = `You're doing well! Portfolio is up, you have a <strong style="color:var(--accent-green)">+$2,380</strong> cash surplus this month, and no urgent action items. The 401k consolidation task could save you $340/year when you finish it.`;
+    } else if (lower.includes('track') || lower.includes('stock')) {
+      response = `Sure! What stock or ETF would you like me to add to your watchlist? Just give me the ticker symbol.`;
+    } else if (lower.includes('help') || lower.includes('can you')) {
+      response = `I can help you with:\n\n• <strong>Portfolio analysis</strong> — check allocation, rebalance\n• <strong>Budget tracking</strong> — find savings, track spending\n• <strong>Bills & taxes</strong> — reminders, deadlines\n• <strong>Big decisions</strong> — buy vs rent, refinance, etc.\n\nTap any task card above or just ask!`;
+    } else {
+      response = `Got it! Let me look into "${text}" for you. Is there a specific task above that relates to this, or should I help you with something new?`;
+    }
+
+    addAgentMessage(response);
+  }, delay);
+}
+
+function handleChip(text) {
+  chatInput.value = text;
+  sendBtn.disabled = false;
+  sendMessage();
+}
+
+// ── Initial greeting ──
+setTimeout(() => {
+  addAgentMessage(
+    `Hey! You have <strong>4 financial tasks</strong> I can help with today. The <strong style="color:var(--accent-amber)">401k consolidation</strong> is in progress — tap to continue where you left off, or ask me anything below.`
+  );
+}, 800);
 </script>
 
 </body>
