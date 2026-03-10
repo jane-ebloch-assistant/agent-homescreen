@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Hiro — Inbox</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    :root {
+      --bg: #FAFAFA;
+      --card-bg: #FFFFFF;
+      --text: #1A1A1A;
+      --text-secondary: #666666;
+      --text-tertiary: #999999;
+      --accent: #0066FF;
+      --accent-light: #E8F0FF;
+      --success: #00A86B;
+      --success-light: #E6F7F1;
+      --warning: #FF9500;
+      --warning-light: #FFF5E6;
+      --danger: #FF3B30;
+      --danger-light: #FFEBEA;
+      --border: #E5E5E5;
+      --shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding-bottom: 100px;
+    }
+    
+    /* Status Bar Spacer */
+    .status-bar {
+      height: 54px;
+      background: var(--bg);
+    }
+    
+    /* Header */
+    .header {
+      padding: 0 20px 20px;
+      background: var(--bg);
+    }
+    
+    .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 4px;
+    }
+    
+    .greeting {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+    
+    .header-badge {
+      background: var(--success-light);
+      color: var(--success);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 20px;
+    }
+    
+    .header-badge.warning {
+      background: var(--warning-light);
+      color: var(--warning);
+    }
+    
+    .subtitle {
+      font-size: 15px;
+      color: var(--text-secondary);
+    }
+    
+    /* Summary Bar */
+    .summary-bar {
+      display: flex;
+      gap: 8px;
+      padding: 0 20px;
+      margin-bottom: 24px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    .summary-bar::-webkit-scrollbar {
+      display: none;
+    }
+    
+    .summary-chip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 500;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+    
+    .summary-chip.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+    }
+    
+    .chip-count {
+      background: var(--danger);
+      color: white;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 10px;
+      min-width: 18px;
+      text-align: center;
+    }
+    
+    .summary-chip.active .chip-count {
+      background: rgba(255,255,255,0.3);
+    }
+    
+    /* Section */
+    .section {
+      padding: 0 20px;
+      margin-bottom: 28px;
+    }
+    
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    
+    .section-title {
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-secondary);
+    }
+    
+    /* Account Cards */
+    .account-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+    
+    .account-card:active {
+      transform: scale(0.98);
+    }
+    
+    .account-card.needs-action {
+      border-left: 4px solid var(--warning);
+    }
+    
+    .account-card.alert {
+      border-left: 4px solid var(--danger);
+    }
+    
+    .account-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+    
+    .account-logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      background: var(--bg);
+      flex-shrink: 0;
+    }
+    
+    .account-info {
+      flex: 1;
+      min-width: 0;
+    }
+    
+    .account-name {
+      font-size: 17px;
+      font-weight: 600;
+      letter-spacing: -0.2px;
+      margin-bottom: 2px;
+    }
+    
+    .account-type {
+      font-size: 13px;
+      color: var(--text-tertiary);
+    }
+    
+    .account-status {
+      font-size: 12px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+    
+    .account-status.good {
+      background: var(--success-light);
+      color: var(--success);
+    }
+    
+    .account-status.warning {
+      background: var(--warning-light);
+      color: var(--warning);
+    }
+    
+    .account-status.alert {
+      background: var(--danger-light);
+      color: var(--danger);
+    }
+    
+    /* Account Details */
+    .account-details {
+      background: var(--bg);
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+    
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+    }
+    
+    .detail-row:not(:last-child) {
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .detail-label {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+    
+    .detail-value {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    
+    .detail-value.warning {
+      color: var(--warning);
+    }
+    
+    .detail-value.danger {
+      color: var(--danger);
+    }
+    
+    /* Action Buttons */
+    .account-actions {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .action-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    
+    .action-btn.primary {
+      background: var(--accent);
+      color: white;
+    }
+    
+    .action-btn.primary:active {
+      background: #0052CC;
+    }
+    
+    .action-btn.secondary {
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    
+    .action-btn.secondary:active {
+      background: var(--border);
+    }
+    
+    /* Timeline */
+    .timeline-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+    }
+    
+    .timeline-item {
+      display: flex;
+      gap: 14px;
+      padding: 12px 0;
+    }
+    
+    .timeline-item:not(:last-child) {
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .timeline-date {
+      width: 50px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    
+    .timeline-day {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    
+    .timeline-month {
+      font-size: 11px;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+    }
+    
+    .timeline-content {
+      flex: 1;
+    }
+    
+    .timeline-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    
+    .timeline-amount {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+    
+    .timeline-badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 4px;
+      align-self: center;
+    }
+    
+    .timeline-badge.due {
+      background: var(--warning-light);
+      color: var(--warning);
+    }
+    
+    .timeline-badge.autopay {
+      background: var(--success-light);
+      color: var(--success);
+    }
+    
+    /* Agent Prompt */
+    .agent-prompt {
+      background: linear-gradient(135deg, var(--accent) 0%, #0052CC 100%);
+      border-radius: 16px;
+      padding: 20px;
+      margin: 0 20px 24px;
+      color: white;
+    }
+    
+    .agent-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    
+    .agent-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+    
+    .agent-name {
+      font-size: 14px;
+      font-weight: 600;
+    }
+    
+    .agent-message {
+      font-size: 15px;
+      line-height: 1.5;
+      margin-bottom: 14px;
+      opacity: 0.95;
+    }
+    
+    .agent-actions {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .agent-btn {
+      flex: 1;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+    }
+    
+    .agent-btn.accept {
+      background: white;
+      color: var(--accent);
+    }
+    
+    .agent-btn.dismiss {
+      background: rgba(255,255,255,0.15);
+      color: white;
+    }
+    
+    /* Bottom Nav */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--card-bg);
+      border-top: 1px solid var(--border);
+      padding: 12px 0 34px;
+      display: flex;
+      justify-content: space-around;
+    }
+    
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 500;
+    }
+    
+    .nav-item.active {
+      color: var(--accent);
+    }
+    
+    .nav-icon {
+      font-size: 24px;
+    }
+    
+    /* Expanded State */
+    .account-expanded {
+      display: none;
+    }
+    
+    .account-card.expanded .account-expanded {
+      display: block;
+    }
+    
+    .account-card.expanded .account-preview {
+      display: none;
+    }
+    
+    /* Preview text for collapsed state */
+    .account-preview {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-top: 8px;
+    }
+    
+    .preview-highlight {
+      color: var(--warning);
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <div class="status-bar"></div>
+  
+  <div class="header">
+    <div class="header-row">
+      <div class="greeting">Inbox</div>
+      <div class="header-badge warning">2 need attention</div>
+    </div>
+    <div class="subtitle">Your accounts at a glance</div>
+  </div>
+  
+  <!-- Filter Chips -->
+  <div class="summary-bar">
+    <div class="summary-chip active">
+      All
+    </div>
+    <div class="summary-chip">
+      Action <span class="chip-count">2</span>
+    </div>
+    <div class="summary-chip">
+      Bills
+    </div>
+    <div class="summary-chip">
+      Statements
+    </div>
+    <div class="summary-chip">
+      Alerts
+    </div>
+  </div>
+  
+  <!-- Agent Suggestion -->
+  <div class="agent-prompt">
+    <div class="agent-header">
+      <div class="agent-avatar">🤖</div>
+      <div class="agent-name">Hiro noticed something</div>
+    </div>
+    <div class="agent-message">Your PG&E bill spiked 34% this month. Want me to look into why and find ways to reduce it?</div>
+    <div class="agent-actions">
+      <button class="agent-btn accept">Yes, analyze</button>
+      <button class="agent-btn dismiss">Dismiss</button>
+    </div>
+  </div>
+  
+  <!-- Needs Action -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Needs Action</div>
+    </div>
+    
+    <div class="account-card needs-action" onclick="toggleExpand(this)">
+      <div class="account-header">
+        <div class="account-logo">⚡</div>
+        <div class="account-info">
+          <div class="account-name">PG&E</div>
+          <div class="account-type">Utility</div>
+        </div>
+        <div class="account-status warning">Due Fri</div>
+      </div>
+      
+      <div class="account-preview">
+        <span class="preview-highlight">$187.42 due Mar 14</span> · Autopay is off
+      </div>
+      
+      <div class="account-expanded">
+        <div class="account-details">
+          <div class="detail-row">
+            <span class="detail-label">Amount due</span>
+            <span class="detail-value warning">$187.42</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Due date</span>
+            <span class="detail-value">Mar 14, 2026</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Last month</span>
+            <span class="detail-value">$139.80</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Autopay</span>
+            <span class="detail-value warning">Off</span>
+          </div>
+        </div>
+        <div class="account-actions">
+          <button class="action-btn primary">Pay Now</button>
+          <button class="action-btn secondary">Set Autopay</button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="account-card alert" onclick="toggleExpand(this)">
+      <div class="account-header">
+        <div class="account-logo">🏦</div>
+        <div class="account-info">
+          <div class="account-name">Chase Sapphire</div>
+          <div class="account-type">Credit Card</div>
+        </div>
+        <div class="account-status alert">Review</div>
+      </div>
+      
+      <div class="account-preview">
+        <span class="preview-highlight">Unusual charge: $847.00</span> at electronics store
+      </div>
+      
+      <div class="account-expanded">
+        <div class="account-details">
+          <div class="detail-row">
+            <span class="detail-label">Flagged charge</span>
+            <span class="detail-value danger">$847.00</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Merchant</span>
+            <span class="detail-value">Best Buy #1294</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Date</span>
+            <span class="detail-value">Mar 8, 2026</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Card ending</span>
+            <span class="detail-value">...4829</span>
+          </div>
+        </div>
+        <div class="account-actions">
+          <button class="action-btn primary">Yes, it's me</button>
+          <button class="action-btn secondary" style="background: var(--danger-light); color: var(--danger); border-color: var(--danger-light);">Report Fraud</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- All Good -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">All Good</div>
+    </div>
+    
+    <div class="account-card" onclick="toggleExpand(this)">
+      <div class="account-header">
+        <div class="account-logo">🏛️</div>
+        <div class="account-info">
+          <div class="account-name">Fidelity</div>
+          <div class="account-type">Brokerage</div>
+        </div>
+        <div class="account-status good">✓ Updated</div>
+      </div>
+      
+      <div class="account-preview">
+        Statement ready · Balance: $124,832.41
+      </div>
+      
+      <div class="account-expanded">
+        <div class="account-details">
+          <div class="detail-row">
+            <span class="detail-label">Total balance</span>
+            <span class="detail-value">$124,832.41</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Monthly change</span>
+            <span class="detail-value" style="color: var(--success);">+$2,341.22</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Last statement</span>
+            <span class="detail-value">Mar 1, 2026</span>
+          </div>
+        </div>
+        <div class="account-actions">
+          <button class="action-btn secondary">View Statement</button>
+          <button class="action-btn secondary">Ask Hiro</button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="account-card" onclick="toggleExpand(this)">
+      <div class="account-header">
+        <div class="account-logo">📱</div>
+        <div class="account-info">
+          <div class="account-name">Verizon</div>
+          <div class="account-type">Phone</div>
+        </div>
+        <div class="account-status good">✓ Paid</div>
+      </div>
+      
+      <div class="account-preview">
+        $89.00 paid Mar 1 · Next: Apr 1
+      </div>
+      
+      <div class="account-expanded">
+        <div class="account-details">
+          <div class="detail-row">
+            <span class="detail-label">Last payment</span>
+            <span class="detail-value">$89.00</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Paid on</span>
+            <span class="detail-value">Mar 1, 2026</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Next bill</span>
+            <span class="detail-value">Apr 1, 2026</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Autopay</span>
+            <span class="detail-value" style="color: var(--success);">On</span>
+          </div>
+        </div>
+        <div class="account-actions">
+          <button class="action-btn secondary">View Details</button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="account-card" onclick="toggleExpand(this)">
+      <div class="account-header">
+        <div class="account-logo">🏠</div>
+        <div class="account-info">
+          <div class="account-name">State Farm</div>
+          <div class="account-type">Insurance</div>
+        </div>
+        <div class="account-status good">✓ Active</div>
+      </div>
+      
+      <div class="account-preview">
+        Policy active · Renews Jun 15
+      </div>
+      
+      <div class="account-expanded">
+        <div class="account-details">
+          <div class="detail-row">
+            <span class="detail-label">Policy</span>
+            <span class="detail-value">Home + Auto Bundle</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Monthly premium</span>
+            <span class="detail-value">$312.00</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Renewal date</span>
+            <span class="detail-value">Jun 15, 2026</span>
+          </div>
+        </div>
+        <div class="account-actions">
+          <button class="action-btn secondary">View Policy</button>
+          <button class="action-btn secondary">Ask Hiro</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Upcoming -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Coming Up</div>
+    </div>
+    
+    <div class="timeline-card">
+      <div class="timeline-item">
+        <div class="timeline-date">
+          <div class="timeline-day">14</div>
+          <div class="timeline-month">Mar</div>
+        </div>
+        <div class="timeline-content">
+          <div class="timeline-title">PG&E</div>
+          <div class="timeline-amount">$187.42</div>
+        </div>
+        <div class="timeline-badge due">Due</div>
+      </div>
+      
+      <div class="timeline-item">
+        <div class="timeline-date">
+          <div class="timeline-day">15</div>
+          <div class="timeline-month">Mar</div>
+        </div>
+        <div class="timeline-content">
+          <div class="timeline-title">Netflix</div>
+          <div class="timeline-amount">$22.99</div>
+        </div>
+        <div class="timeline-badge autopay">Autopay</div>
+      </div>
+      
+      <div class="timeline-item">
+        <div class="timeline-date">
+          <div class="timeline-day">20</div>
+          <div class="timeline-month">Mar</div>
+        </div>
+        <div class="timeline-content">
+          <div class="timeline-title">Chase Sapphire</div>
+          <div class="timeline-amount">$2,341.87</div>
+        </div>
+        <div class="timeline-badge autopay">Autopay</div>
+      </div>
+      
+      <div class="timeline-item">
+        <div class="timeline-date">
+          <div class="timeline-day">1</div>
+          <div class="timeline-month">Apr</div>
+        </div>
+        <div class="timeline-content">
+          <div class="timeline-title">Verizon</div>
+          <div class="timeline-amount">~$89.00</div>
+        </div>
+        <div class="timeline-badge autopay">Autopay</div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Bottom Nav -->
+  <div class="bottom-nav">
+    <a href="#" class="nav-item">
+      <span class="nav-icon">✓</span>
+      <span>Tasks</span>
+    </a>
+    <a href="#" class="nav-item active">
+      <span class="nav-icon">📬</span>
+      <span>Inbox</span>
+    </a>
+    <a href="#" class="nav-item">
+      <span class="nav-icon">💼</span>
+      <span>Portfolio</span>
+    </a>
+    <a href="#" class="nav-item">
+      <span class="nav-icon">💬</span>
+      <span>Chat</span>
+    </a>
+  </div>
+  
+  <script>
+    function toggleExpand(card) {
+      card.classList.toggle('expanded');
+    }
+    
+    // Chip selection
+    document.querySelectorAll('.summary-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('.summary-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

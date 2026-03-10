@@ -26,6 +26,14 @@
       -webkit-text-fill-color: transparent;
     }
     p { color: #8888a0; margin-bottom: 32px; }
+    .section-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #55556a;
+      margin-bottom: 12px;
+      margin-top: 24px;
+    }
     .versions {
       display: flex;
       gap: 16px;
@@ -56,11 +64,23 @@
       color: #8888a0;
       margin-top: 4px;
     }
+    a.new::after {
+      content: 'NEW';
+      font-size: 9px;
+      background: #4a9eff;
+      color: white;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
   </style>
 </head>
 <body>
-  <h1>Hiro Agent Homescreen</h1>
-  <p>Select a version</p>
+  <h1>Hiro Prototypes</h1>
+  <p>Mobile UI explorations</p>
+  
+  <div class="section-label">Homescreen</div>
   <div class="versions">
     <a href="v1/">
       v1
@@ -69,6 +89,18 @@
     <a href="v2/">
       v2
       <span>Financial focus</span>
+    </a>
+    <a href="v3/">
+      v3
+      <span>Task-based + chat</span>
+    </a>
+  </div>
+  
+  <div class="section-label">Inbox</div>
+  <div class="versions">
+    <a href="inbox/" class="new">
+      v1
+      <span>Email command center</span>
     </a>
   </div>
 </body>
