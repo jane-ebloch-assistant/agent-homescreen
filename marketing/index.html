@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hiro — The Tax Planner You Couldn't Afford to Hire</title>
+<meta name="description" content="AI-powered tax planning that finds and executes tax savings opportunities year-round. Save $3,000–$8,000 annually with strategies previously reserved for $10M+ clients.">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  :root {
+    --bg: #0a0a0f;
+    --bg-card: #12121a;
+    --bg-elevated: #1a1a24;
+    --border: rgba(255,255,255,0.08);
+    --text: #f0f0f5;
+    --text-secondary: #9898a8;
+    --text-muted: #5a5a6a;
+    --accent: #34d399;
+    --accent-blue: #4a9eff;
+    --accent-purple: #a78bfa;
+    --accent-amber: #fbbf24;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ── Navigation ── */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    padding: 20px 0;
+    background: rgba(10,10,15,0.8);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  nav .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: var(--text);
+  }
+
+  .logo-icon {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-blue) 100%);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 18px;
+  }
+
+  .logo-text {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+  }
+
+  .nav-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover {
+    color: var(--text);
+  }
+
+  .nav-cta {
+    padding: 10px 20px;
+    background: var(--accent);
+    color: #000;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+
+  .nav-cta:hover {
+    opacity: 0.9;
+    color: #000;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    padding: 160px 0 120px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 800px;
+    height: 800px;
+    background: radial-gradient(circle, rgba(52,211,153,0.08) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: rgba(52,211,153,0.1);
+    border: 1px solid rgba(52,211,153,0.2);
+    border-radius: 100px;
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 24px;
+  }
+
+  .hero h1 {
+    font-size: clamp(40px, 6vw, 72px);
+    font-weight: 800;
+    letter-spacing: -2px;
+    line-height: 1.1;
+    margin-bottom: 24px;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero h1 .highlight {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-blue) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .hero-subtitle {
+    font-size: clamp(18px, 2.5vw, 22px);
+    color: var(--text-secondary);
+    max-width: 640px;
+    margin: 0 auto 40px;
+    line-height: 1.6;
+  }
+
+  .hero-ctas {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    padding: 16px 32px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #000;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(52,211,153,0.3);
+  }
+
+  .btn-secondary {
+    background: var(--bg-card);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  .btn-secondary:hover {
+    background: var(--bg-elevated);
+    border-color: rgba(255,255,255,0.15);
+  }
+
+  .hero-proof {
+    margin-top: 60px;
+    display: flex;
+    justify-content: center;
+    gap: 48px;
+    flex-wrap: wrap;
+  }
+
+  .proof-item {
+    text-align: center;
+  }
+
+  .proof-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+  }
+
+  .proof-label {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  /* ── Problem Section ── */
+  .problem {
+    padding: 120px 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .section-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-size: clamp(32px, 4vw, 48px);
+    font-weight: 700;
+    letter-spacing: -1px;
+    margin-bottom: 24px;
+    max-width: 700px;
+  }
+
+  .section-subtitle {
+    font-size: 18px;
+    color: var(--text-secondary);
+    max-width: 600px;
+    line-height: 1.7;
+  }
+
+  .problem-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    margin-top: 60px;
+    align-items: center;
+  }
+
+  .problem-list {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .problem-item {
+    display: flex;
+    gap: 16px;
+    padding: 24px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+  }
+
+  .problem-icon {
+    width: 48px;
+    height: 48px;
+    background: rgba(248,113,113,0.1);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+
+  .problem-content h4 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .problem-content p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .problem-visual {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 40px;
+    text-align: center;
+  }
+
+  .tax-leak {
+    font-size: 72px;
+    font-weight: 800;
+    color: #f87171;
+    margin-bottom: 16px;
+  }
+
+  .tax-leak-label {
+    font-size: 18px;
+    color: var(--text-secondary);
+    margin-bottom: 32px;
+  }
+
+  .tax-leak-breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    text-align: left;
+  }
+
+  .leak-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: rgba(248,113,113,0.05);
+    border-radius: 8px;
+    font-size: 14px;
+  }
+
+  .leak-item span:last-child {
+    color: #f87171;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+  }
+
+  /* ── Solution Section ── */
+  .solution {
+    padding: 120px 0;
+    border-top: 1px solid var(--border);
+    background: linear-gradient(180deg, var(--bg) 0%, rgba(52,211,153,0.02) 100%);
+  }
+
+  .solution .section-title {
+    text-align: center;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .solution .section-subtitle {
+    text-align: center;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 60px;
+  }
+
+  .feature-card {
+    padding: 32px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    transition: all 0.3s;
+  }
+
+  .feature-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(52,211,153,0.3);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+  }
+
+  .feature-icon {
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, rgba(52,211,153,0.15) 0%, rgba(74,158,255,0.15) 100%);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    margin-bottom: 20px;
+  }
+
+  .feature-card h3 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+
+  .feature-card p {
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  /* ── Comparison Section ── */
+  .comparison {
+    padding: 120px 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .comparison-table {
+    margin-top: 60px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    overflow: hidden;
+  }
+
+  .comparison-header {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    background: var(--bg-elevated);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .comparison-header > div {
+    padding: 20px 24px;
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  .comparison-header > div:not(:first-child) {
+    text-align: center;
+  }
+
+  .comparison-header .hiro-col {
+    background: rgba(52,211,153,0.1);
+    color: var(--accent);
+  }
+
+  .comparison-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .comparison-row:last-child {
+    border-bottom: none;
+  }
+
+  .comparison-row > div {
+    padding: 16px 24px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+  }
+
+  .comparison-row > div:not(:first-child) {
+    justify-content: center;
+  }
+
+  .comparison-row .feature-name {
+    color: var(--text-secondary);
+  }
+
+  .comparison-row .hiro-col {
+    background: rgba(52,211,153,0.05);
+  }
+
+  .check {
+    color: var(--accent);
+    font-size: 18px;
+  }
+
+  .cross {
+    color: var(--text-muted);
+    font-size: 18px;
+  }
+
+  .partial {
+    color: var(--accent-amber);
+    font-size: 12px;
+  }
+
+  /* ── How It Works ── */
+  .how-it-works {
+    padding: 120px 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    margin-top: 60px;
+  }
+
+  .step {
+    text-align: center;
+    position: relative;
+  }
+
+  .step::after {
+    content: '→';
+    position: absolute;
+    right: -28px;
+    top: 40px;
+    font-size: 24px;
+    color: var(--text-muted);
+  }
+
+  .step:last-child::after {
+    display: none;
+  }
+
+  .step-number {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-blue) 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 700;
+    color: #000;
+    margin: 0 auto 24px;
+  }
+
+  .step h3 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+
+  .step p {
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  /* ── Testimonials ── */
+  .testimonials {
+    padding: 120px 0;
+    border-top: 1px solid var(--border);
+    background: var(--bg-card);
+  }
+
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 60px;
+  }
+
+  .testimonial {
+    padding: 32px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+  }
+
+  .testimonial-quote {
+    font-size: 16px;
+    line-height: 1.7;
+    margin-bottom: 24px;
+    color: var(--text-secondary);
+  }
+
+  .testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .author-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-purple) 0%, var(--accent-blue) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 16px;
+  }
+
+  .author-info h4 {
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .author-info p {
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .testimonial-savings {
+    margin-top: 16px;
+    padding: 12px 16px;
+    background: rgba(52,211,153,0.1);
+    border-radius: 8px;
+    font-size: 14px;
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* ── Pricing ── */
+  .pricing {
+    padding: 120px 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .pricing-card {
+    max-width: 500px;
+    margin: 60px auto 0;
+    padding: 48px;
+    background: var(--bg-card);
+    border: 2px solid var(--accent);
+    border-radius: 24px;
+    text-align: center;
+    position: relative;
+  }
+
+  .pricing-badge {
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 8px 20px;
+    background: var(--accent);
+    color: #000;
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: 100px;
+  }
+
+  .pricing-price {
+    margin-bottom: 8px;
+  }
+
+  .pricing-price .amount {
+    font-size: 64px;
+    font-weight: 800;
+    letter-spacing: -2px;
+  }
+
+  .pricing-price .period {
+    font-size: 20px;
+    color: var(--text-secondary);
+  }
+
+  .pricing-subtitle {
+    font-size: 16px;
+    color: var(--text-secondary);
+    margin-bottom: 32px;
+  }
+
+  .pricing-features {
+    text-align: left;
+    margin-bottom: 32px;
+  }
+
+  .pricing-feature {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 15px;
+  }
+
+  .pricing-feature:last-child {
+    border-bottom: none;
+  }
+
+  .pricing-feature .check {
+    font-size: 16px;
+  }
+
+  .pricing-cta {
+    width: 100%;
+    padding: 18px;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .pricing-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(52,211,153,0.3);
+  }
+
+  .pricing-guarantee {
+    margin-top: 20px;
+    font-size: 14px;
+    color: var(--text-muted);
+  }
+
+  /* ── FAQ ── */
+  .faq {
+    padding: 120px 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .faq-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    margin-top: 60px;
+  }
+
+  .faq-item {
+    padding: 28px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+  }
+
+  .faq-item h4 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+
+  .faq-item p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  /* ── Final CTA ── */
+  .final-cta {
+    padding: 120px 0;
+    text-align: center;
+    background: linear-gradient(180deg, var(--bg) 0%, rgba(52,211,153,0.05) 100%);
+    border-top: 1px solid var(--border);
+  }
+
+  .final-cta h2 {
+    font-size: clamp(32px, 4vw, 48px);
+    font-weight: 700;
+    letter-spacing: -1px;
+    margin-bottom: 24px;
+  }
+
+  .final-cta p {
+    font-size: 18px;
+    color: var(--text-secondary);
+    max-width: 500px;
+    margin: 0 auto 40px;
+  }
+
+  /* ── Footer ── */
+  footer {
+    padding: 60px 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 32px;
+  }
+
+  .footer-links a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover {
+    color: var(--text);
+  }
+
+  .footer-copy {
+    font-size: 14px;
+    color: var(--text-muted);
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 1024px) {
+    .features-grid,
+    .testimonials-grid,
+    .steps {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .step::after {
+      display: none;
+    }
+
+    .comparison-header,
+    .comparison-row {
+      grid-template-columns: 1.5fr 1fr 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 768px) {
+    nav .nav-links {
+      display: none;
+    }
+
+    .hero {
+      padding: 120px 0 80px;
+    }
+
+    .hero-proof {
+      gap: 32px;
+    }
+
+    .problem-grid {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+
+    .problem-visual {
+      order: -1;
+    }
+
+    .features-grid,
+    .testimonials-grid,
+    .steps,
+    .faq-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .comparison-table {
+      overflow-x: auto;
+    }
+
+    .comparison-header,
+    .comparison-row {
+      min-width: 600px;
+    }
+
+    .pricing-card {
+      padding: 32px 24px;
+    }
+
+    .pricing-price .amount {
+      font-size: 48px;
+    }
+
+    .footer-content {
+      flex-direction: column;
+      gap: 24px;
+      text-align: center;
+    }
+  }
+</style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav>
+    <div class="container">
+      <a href="#" class="logo">
+        <div class="logo-icon">H</div>
+        <span class="logo-text">Hiro</span>
+      </a>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#how-it-works">How It Works</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#faq">FAQ</a>
+        <a href="#" class="nav-cta">Get Started</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-badge">✨ Now in Early Access</div>
+      <h1>The Tax Planner <span class="highlight">You Couldn't Afford</span> to Hire</h1>
+      <p class="hero-subtitle">
+        AI-powered tax planning that finds and executes tax savings opportunities year-round. The same strategies $10M+ clients get — for a fraction of the cost.
+      </p>
+      <div class="hero-ctas">
+        <a href="#" class="btn btn-primary">Start Saving Today →</a>
+        <a href="#how-it-works" class="btn btn-secondary">See How It Works</a>
+      </div>
+      <div class="hero-proof">
+        <div class="proof-item">
+          <div class="proof-value">$5,400</div>
+          <div class="proof-label">Avg. Annual Savings</div>
+        </div>
+        <div class="proof-item">
+          <div class="proof-value">12 min</div>
+          <div class="proof-label">Setup Time</div>
+        </div>
+        <div class="proof-item">
+          <div class="proof-value">10x</div>
+          <div class="proof-label">ROI on Average</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Problem -->
+  <section class="problem">
+    <div class="container">
+      <div class="section-label">The Problem</div>
+      <h2 class="section-title">You have a tax problem you don't know about.</h2>
+      <p class="section-subtitle">
+        You earn well, you save diligently, and you pay a CPA to file your return. But filing isn't planning.
+      </p>
+      
+      <div class="problem-grid">
+        <div class="problem-list">
+          <div class="problem-item">
+            <div class="problem-icon">📅</div>
+            <div class="problem-content">
+              <h4>Your CPA looks backward</h4>
+              <p>They see capital gains in February. We see them forming in August and tell you how to offset them.</p>
+            </div>
+          </div>
+          <div class="problem-item">
+            <div class="problem-icon">⏰</div>
+            <div class="problem-content">
+              <h4>Windows close without warning</h4>
+              <p>Roth conversion windows close December 31. If your CPA mentions it in April, you've already missed it.</p>
+            </div>
+          </div>
+          <div class="problem-item">
+            <div class="problem-icon">🚫</div>
+            <div class="problem-content">
+              <h4>Tax planners don't work with you</h4>
+              <p>Their minimums start at $1M+. You don't have a tax planner because they won't take your call.</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="problem-visual">
+          <div class="tax-leak">$5,400</div>
+          <div class="tax-leak-label">Left on the table every year</div>
+          <div class="tax-leak-breakdown">
+            <div class="leak-item">
+              <span>Missed Roth conversions</span>
+              <span>-$2,100</span>
+            </div>
+            <div class="leak-item">
+              <span>Unharvested losses</span>
+              <span>-$1,400</span>
+            </div>
+            <div class="leak-item">
+              <span>Bad asset location</span>
+              <span>-$900</span>
+            </div>
+            <div class="leak-item">
+              <span>Suboptimal RSU decisions</span>
+              <span>-$1,000</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Solution -->
+  <section class="solution" id="features">
+    <div class="container">
+      <div class="section-label">The Solution</div>
+      <h2 class="section-title">Your CPA files. We plan.</h2>
+      <p class="section-subtitle">
+        We monitor your accounts year-round and tell you exactly what to do, when, and why.
+      </p>
+      
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🔄</div>
+          <h3>Roth Conversion Modeling</h3>
+          <p>Multi-year projections that factor in IRMAA thresholds, RMDs, and state taxes. We tell you exactly how much to convert and when.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📉</div>
+          <h3>Tax-Loss Harvesting</h3>
+          <p>We spot harvestable losses across all your accounts — not just one brokerage — and alert you before the opportunity fades.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3>RSU & ISO Planning</h3>
+          <p>Exercise timing optimized to your bracket and AMT exposure. Know exactly when to sell, hold, or exercise.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎯</div>
+          <h3>Asset Location</h3>
+          <p>The right investments in the right accounts. We coordinate across your entire household for maximum tax efficiency.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">💰</div>
+          <h3>Capital Gains Management</h3>
+          <p>Lot-level tracking and recommendations. Offset gains with losses, manage wash sales, minimize your bill.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎁</div>
+          <h3>Charitable Optimization</h3>
+          <p>DAF bunching strategies, appreciated stock donations, and QCDs — all timed to maximize your deduction and impact.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Comparison -->
+  <section class="comparison">
+    <div class="container">
+      <div class="section-label">Why Hiro</div>
+      <h2 class="section-title">Wealth manager strategies without the wealth manager</h2>
+      <p class="section-subtitle">
+        The strategies we run are the same ones $10M+ clients get from Goldman Private Wealth.
+      </p>
+      
+      <div class="comparison-table">
+        <div class="comparison-header">
+          <div>Capability</div>
+          <div class="hiro-col">Hiro</div>
+          <div>Robo Advisor</div>
+          <div>Your CPA</div>
+        </div>
+        <div class="comparison-row">
+          <div class="feature-name">Year-round monitoring</div>
+          <div class="hiro-col"><span class="check">✓</span></div>
+          <div><span class="partial">TLH only</span></div>
+          <div><span class="cross">✗</span></div>
+        </div>
+        <div class="comparison-row">
+          <div class="feature-name">Roth conversion modeling</div>
+          <div class="hiro-col"><span class="check">✓</span></div>
+          <div><span class="cross">✗</span></div>
+          <div><span class="partial">Rarely</span></div>
+        </div>
+        <div class="comparison-row">
+          <div class="feature-name">RSU/ISO planning</div>
+          <div class="hiro-col"><span class="check">✓</span></div>
+          <div><span class="cross">✗</span></div>
+          <div><span class="partial">Rarely</span></div>
+        </div>
+        <div class="comparison-row">
+          <div class="feature-name">Cross-account coordination</div>
+          <div class="hiro-col"><span class="check">✓</span></div>
+          <div><span class="cross">✗</span></div>
+          <div><span class="cross">✗</span></div>
+        </div>
+        <div class="comparison-row">
+          <div class="feature-name">Proactive alerts</div>
+          <div class="hiro-col"><span class="check">✓</span></div>
+          <div><span class="cross">✗</span></div>
+          <div><span class="cross">✗</span></div>
+        </div>
+        <div class="comparison-row">
+          <div class="feature-name">Dollar-specific actions</div>
+          <div class="hiro-col"><span class="check">✓</span></div>
+          <div><span class="cross">✗</span></div>
+          <div><span class="partial">Varies</span></div>
+        </div>
+        <div class="comparison-row">
+          <div class="feature-name">Annual cost ($500K portfolio)</div>
+          <div class="hiro-col"><strong style="color: var(--accent)">$500</strong></div>
+          <div>$1,250+</div>
+          <div>$2,000+</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="how-it-works" id="how-it-works">
+    <div class="container">
+      <div class="section-label">How It Works</div>
+      <h2 class="section-title">From setup to savings in 12 minutes</h2>
+      
+      <div class="steps">
+        <div class="step">
+          <div class="step-number">1</div>
+          <h3>Connect Your Accounts</h3>
+          <p>Securely link your brokerage, 401(k), IRA, and equity comp accounts. We use read-only access — we never move your money.</p>
+        </div>
+        <div class="step">
+          <div class="step-number">2</div>
+          <h3>Get Your Tax Plan</h3>
+          <p>Within minutes, see your projected savings and personalized recommendations with specific dollar amounts and deadlines.</p>
+        </div>
+        <div class="step">
+          <div class="step-number">3</div>
+          <h3>Take Action & Save</h3>
+          <p>Review each recommendation, understand the math, and execute with confidence. We track what you've captured year-to-date.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="testimonials">
+    <div class="container">
+      <div class="section-label">Results</div>
+      <h2 class="section-title">Real savings from real users</h2>
+      
+      <div class="testimonials-grid">
+        <div class="testimonial">
+          <p class="testimonial-quote">"I thought my CPA had me covered. Hiro found $4,200 in Roth conversion opportunities I would have completely missed. It paid for itself 8x over."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">MK</div>
+            <div class="author-info">
+              <h4>Michael K.</h4>
+              <p>Software Engineer, $380K HHI</p>
+            </div>
+          </div>
+          <div class="testimonial-savings">Saved $4,200 in Year 1</div>
+        </div>
+        
+        <div class="testimonial">
+          <p class="testimonial-quote">"My RSUs vest quarterly and I had no idea I was making $10K+ mistakes. Hiro's equity comp planning alone is worth 10x the subscription."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">SL</div>
+            <div class="author-info">
+              <h4>Sarah L.</h4>
+              <p>Product Manager, FAANG</p>
+            </div>
+          </div>
+          <div class="testimonial-savings">Saved $7,800 in Year 1</div>
+        </div>
+        
+        <div class="testimonial">
+          <p class="testimonial-quote">"As an early retiree, the Roth conversion window is everything. Hiro models out the next 10 years and tells me exactly what to do. Game changer."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">JR</div>
+            <div class="author-info">
+              <h4>James R.</h4>
+              <p>Early Retiree, FIRE Community</p>
+            </div>
+          </div>
+          <div class="testimonial-savings">Projected $42K lifetime savings</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="pricing" id="pricing">
+    <div class="container">
+      <div class="section-label">Pricing</div>
+      <h2 class="section-title" style="text-align: center;">It pays for itself with one Roth conversion.</h2>
+      
+      <div class="pricing-card">
+        <div class="pricing-badge">Most Popular</div>
+        <div class="pricing-price">
+          <span class="amount">$500</span>
+          <span class="period">/year</span>
+        </div>
+        <p class="pricing-subtitle">Less than $42/month to stop overpaying taxes</p>
+        
+        <div class="pricing-features">
+          <div class="pricing-feature">
+            <span class="check">✓</span>
+            <span>Unlimited account connections</span>
+          </div>
+          <div class="pricing-feature">
+            <span class="check">✓</span>
+            <span>Year-round monitoring & alerts</span>
+          </div>
+          <div class="pricing-feature">
+            <span class="check">✓</span>
+            <span>Roth conversion modeling</span>
+          </div>
+          <div class="pricing-feature">
+            <span class="check">✓</span>
+            <span>Tax-loss harvesting alerts</span>
+          </div>
+          <div class="pricing-feature">
+            <span class="check">✓</span>
+            <span>RSU & ISO planning</span>
+          </div>
+          <div class="pricing-feature">
+            <span class="check">✓</span>
+            <span>Asset location optimization</span>
+          </div>
+          <div class="pricing-feature">
+            <span class="check">✓</span>
+            <span>Household-level coordination</span>
+          </div>
+        </div>
+        
+        <button class="pricing-cta">Start Your Free Trial →</button>
+        <p class="pricing-guarantee">30-day money-back guarantee. No questions asked.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq" id="faq">
+    <div class="container">
+      <div class="section-label">FAQ</div>
+      <h2 class="section-title">Common questions</h2>
+      
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h4>My CPA handles my taxes. Why do I need this?</h4>
+          <p>Your CPA is great at filing. But have they ever called you in October to say "convert $18K to your Roth before year-end"? Filing and planning are different jobs. We plan, they file.</p>
+        </div>
+        <div class="faq-item">
+          <h4>I use a robo-advisor that does tax-loss harvesting.</h4>
+          <p>TLH is one of ~10 strategies. Your robo doesn't know your W-2 income, your spouse's 401k, your ISO exercise schedule, or that you're 2 years from IRMAA. We see the whole picture.</p>
+        </div>
+        <div class="faq-item">
+          <h4>How is this different from TurboTax?</h4>
+          <p>TurboTax helps you fill out forms in April. We tell you what to do in March, June, September, and November so that when April comes, your bill is already lower.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Do you move my money or file my taxes?</h4>
+          <p>No. We use read-only access to analyze your accounts. You stay in control. We show you the math, you decide. Think of us as a tax-smart second opinion that watches 24/7.</p>
+        </div>
+        <div class="faq-item">
+          <h4>I don't have enough money for this to matter.</h4>
+          <p>The biggest ROI on tax planning is actually in the $250K–$1M range. $5K in annual savings is 1–2% of your portfolio. That compounds. Over 20 years, it's huge.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Is my data secure?</h4>
+          <p>Bank-level encryption (AES-256), SOC 2 Type II certified, and we use Plaid for account connections. We can't move money even if we wanted to.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="final-cta">
+    <div class="container">
+      <h2>Stop overpaying taxes you don't owe.</h2>
+      <p>Join thousands of smart savers who've stopped leaving money on the table.</p>
+      <a href="#" class="btn btn-primary">Start Your Free Trial →</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <a href="#" class="logo">
+          <div class="logo-icon">H</div>
+          <span class="logo-text">Hiro</span>
+        </a>
+        <div class="footer-links">
+          <a href="#">Privacy</a>
+          <a href="#">Terms</a>
+          <a href="#">Security</a>
+          <a href="#">Contact</a>
+        </div>
+        <div class="footer-copy">© 2026 Hiro. All rights reserved.</div>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
