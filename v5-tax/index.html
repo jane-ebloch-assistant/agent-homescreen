@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hiro — Tax Planning</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg-primary: #0a0a0f;
+    --bg-secondary: #12121a;
+    --bg-card: #16161f;
+    --bg-card-hover: #1c1c28;
+    --bg-elevated: #1e1e2a;
+    --bg-sidebar: #0d0d12;
+    --border: rgba(255,255,255,0.06);
+    --border-active: rgba(255,255,255,0.12);
+    --text-primary: #f0f0f5;
+    --text-secondary: #8888a0;
+    --text-tertiary: #55556a;
+    --accent-blue: #4a9eff;
+    --accent-green: #34d399;
+    --accent-red: #f87171;
+    --accent-amber: #fbbf24;
+    --accent-purple: #a78bfa;
+    --accent-cyan: #22d3ee;
+    --glow-green: rgba(52,211,153,0.12);
+    --radius: 16px;
+    --radius-sm: 12px;
+    --radius-xs: 8px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    height: 100%;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ══════════════════════════════════════════════════════════════
+     DESKTOP LAYOUT (sidebar + main content)
+     ══════════════════════════════════════════════════════════════ */
+  
+  .app-layout {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: 260px;
+    background: var(--bg-sidebar);
+    border-right: 1px solid var(--border);
+    padding: 24px 16px;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 100;
+  }
+
+  .sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 8px;
+    margin-bottom: 32px;
+  }
+
+  .logo-icon {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, var(--accent-green) 0%, var(--accent-blue) 100%);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 16px;
+  }
+
+  .logo-text {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+
+  .sidebar-nav {
+    flex: 1;
+  }
+
+  .nav-section {
+    margin-bottom: 24px;
+  }
+
+  .nav-section-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 0 12px;
+    margin-bottom: 8px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: var(--radius-xs);
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.15s;
+    cursor: pointer;
+  }
+
+  .nav-item:hover {
+    background: var(--bg-card);
+    color: var(--text-primary);
+  }
+
+  .nav-item.active {
+    background: rgba(74,158,255,0.1);
+    color: var(--accent-blue);
+  }
+
+  .nav-item svg {
+    width: 20px;
+    height: 20px;
+    opacity: 0.7;
+  }
+
+  .nav-item.active svg {
+    opacity: 1;
+  }
+
+  .nav-badge {
+    margin-left: auto;
+    background: var(--accent-amber);
+    color: #000;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+  }
+
+  .sidebar-footer {
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .user-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px;
+    border-radius: var(--radius-xs);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .user-card:hover {
+    background: var(--bg-card);
+  }
+
+  .user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-purple) 0%, var(--accent-blue) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  .user-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .user-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .user-email {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* ── Main Content ── */
+  .main-content {
+    flex: 1;
+    margin-left: 260px;
+    min-height: 100vh;
+  }
+
+  .main-header {
+    padding: 24px 32px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    background: var(--bg-primary);
+    z-index: 50;
+  }
+
+  .main-title {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+
+  .main-subtitle {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-top: 4px;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 12px;
+  }
+
+  .header-btn {
+    padding: 10px 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xs);
+    color: var(--text-primary);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .header-btn:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--border-active);
+  }
+
+  .header-btn.primary {
+    background: var(--accent-blue);
+    border-color: var(--accent-blue);
+    color: white;
+  }
+
+  .header-btn.primary:hover {
+    opacity: 0.9;
+  }
+
+  .main-body {
+    padding: 24px 32px;
+  }
+
+  /* ── Grid Layout ── */
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 24px;
+  }
+
+  .primary-column {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .secondary-column {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  /* ── Cards ── */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .card-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .card-title {
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .card-badge {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 12px;
+  }
+
+  .card-badge.success {
+    background: rgba(52,211,153,0.15);
+    color: var(--accent-green);
+  }
+
+  .card-badge.warning {
+    background: rgba(251,191,36,0.15);
+    color: var(--accent-amber);
+  }
+
+  .card-body {
+    padding: 24px;
+  }
+
+  /* ── Savings Summary ── */
+  .savings-card {
+    background: linear-gradient(135deg, rgba(52,211,153,0.08) 0%, rgba(74,158,255,0.05) 100%);
+    border-color: rgba(52,211,153,0.2);
+  }
+
+  .savings-hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+  }
+
+  .savings-main {
+    flex: 1;
+  }
+
+  .savings-label {
+    font-size: 14px;
+    color: var(--accent-green);
+    font-weight: 500;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .savings-amount {
+    font-size: 48px;
+    font-weight: 700;
+    letter-spacing: -2px;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .savings-subtext {
+    font-size: 15px;
+    color: var(--text-secondary);
+  }
+
+  .savings-subtext strong {
+    color: var(--accent-green);
+  }
+
+  .savings-chart {
+    width: 120px;
+    height: 120px;
+    position: relative;
+  }
+
+  .savings-breakdown {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+
+  .breakdown-item {
+    text-align: center;
+  }
+
+  .breakdown-value {
+    font-size: 24px;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 4px;
+  }
+
+  .breakdown-value.green { color: var(--accent-green); }
+  .breakdown-value.amber { color: var(--accent-amber); }
+  .breakdown-value.blue { color: var(--accent-blue); }
+
+  .breakdown-label {
+    font-size: 12px;
+    color: var(--text-tertiary);
+  }
+
+  /* ── Actions List ── */
+  .action-item {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 16px;
+    transition: background 0.15s;
+    cursor: pointer;
+  }
+
+  .action-item:last-child {
+    border-bottom: none;
+  }
+
+  .action-item:hover {
+    background: var(--bg-card-hover);
+  }
+
+  .action-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-xs);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+
+  .action-icon.roth { background: rgba(167,139,250,0.15); }
+  .action-icon.tlh { background: rgba(52,211,153,0.15); }
+  .action-icon.rsu { background: rgba(74,158,255,0.15); }
+  .action-icon.daf { background: rgba(251,191,36,0.15); }
+
+  .action-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .action-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 6px;
+  }
+
+  .action-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .action-value {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--accent-green);
+    font-family: 'JetBrains Mono', monospace;
+    white-space: nowrap;
+  }
+
+  .action-description {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-bottom: 10px;
+  }
+
+  .action-meta {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+
+  .action-deadline {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-tertiary);
+  }
+
+  .action-deadline.urgent {
+    color: var(--accent-amber);
+  }
+
+  .action-deadline.critical {
+    color: var(--accent-red);
+  }
+
+  .action-deadline svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .action-btn {
+    padding: 6px 14px;
+    background: var(--accent-blue);
+    border: none;
+    border-radius: 6px;
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+
+  .action-btn:hover {
+    opacity: 0.9;
+  }
+
+  /* ── Tax Bracket ── */
+  .bracket-visual {
+    margin-bottom: 20px;
+  }
+
+  .bracket-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 16px;
+  }
+
+  .bracket-current {
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+
+  .bracket-rate {
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--accent-blue);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .bracket-rate span {
+    font-size: 16px;
+    color: var(--text-secondary);
+    font-weight: 400;
+  }
+
+  .bracket-bar-container {
+    position: relative;
+    margin-bottom: 8px;
+  }
+
+  .bracket-bar {
+    height: 12px;
+    background: var(--bg-elevated);
+    border-radius: 6px;
+    overflow: hidden;
+    display: flex;
+  }
+
+  .bracket-segment {
+    height: 100%;
+    position: relative;
+  }
+
+  .bracket-segment.filled {
+    background: linear-gradient(90deg, var(--accent-green) 0%, var(--accent-blue) 100%);
+  }
+
+  .bracket-segment.empty {
+    background: var(--bg-elevated);
+  }
+
+  .bracket-marker {
+    position: absolute;
+    right: 0;
+    top: -4px;
+    bottom: -4px;
+    width: 4px;
+    background: var(--text-primary);
+    border-radius: 2px;
+    box-shadow: 0 0 8px rgba(255,255,255,0.3);
+  }
+
+  .bracket-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--text-tertiary);
+  }
+
+  .bracket-insight {
+    padding: 16px;
+    background: rgba(74,158,255,0.08);
+    border-radius: var(--radius-xs);
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  .bracket-insight strong {
+    color: var(--accent-blue);
+  }
+
+  /* ── Year Progress ── */
+  .year-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  .year-info {
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+
+  .year-remaining {
+    font-size: 14px;
+    color: var(--accent-amber);
+    font-weight: 600;
+  }
+
+  .year-bar {
+    height: 8px;
+    background: var(--bg-elevated);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+
+  .year-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-green) 0%, var(--accent-amber) 100%);
+    border-radius: 4px;
+    width: 23%;
+  }
+
+  .milestones-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .milestone {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--bg-elevated);
+    border-radius: var(--radius-xs);
+    font-size: 13px;
+  }
+
+  .milestone-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+  }
+
+  .milestone.complete .milestone-icon {
+    background: rgba(52,211,153,0.15);
+    color: var(--accent-green);
+  }
+
+  .milestone.upcoming .milestone-icon {
+    background: rgba(251,191,36,0.15);
+    color: var(--accent-amber);
+  }
+
+  .milestone.future .milestone-icon {
+    background: var(--bg-card);
+    color: var(--text-tertiary);
+  }
+
+  .milestone-content {
+    flex: 1;
+  }
+
+  .milestone-title {
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .milestone-date {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    margin-top: 2px;
+  }
+
+  /* ── Accounts ── */
+  .accounts-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .account-card {
+    padding: 16px;
+    background: var(--bg-elevated);
+    border-radius: var(--radius-sm);
+    transition: background 0.15s;
+    cursor: pointer;
+  }
+
+  .account-card:hover {
+    background: var(--bg-card-hover);
+  }
+
+  .account-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+  }
+
+  .account-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--bg-card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+  }
+
+  .account-type-badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .account-type-badge.pretax {
+    background: rgba(167,139,250,0.15);
+    color: var(--accent-purple);
+  }
+
+  .account-type-badge.roth {
+    background: rgba(52,211,153,0.15);
+    color: var(--accent-green);
+  }
+
+  .account-type-badge.taxable {
+    background: rgba(74,158,255,0.15);
+    color: var(--accent-blue);
+  }
+
+  .account-type-badge.equity {
+    background: rgba(251,191,36,0.15);
+    color: var(--accent-amber);
+  }
+
+  .account-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+
+  .account-balance {
+    font-size: 20px;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-primary);
+  }
+
+  .account-change {
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    margin-top: 4px;
+  }
+
+  .account-change.positive { color: var(--accent-green); }
+  .account-change.negative { color: var(--accent-red); }
+
+  /* ── Completed ── */
+  .completed-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .completed-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .completed-check {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(52,211,153,0.15);
+    color: var(--accent-green);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+  }
+
+  .completed-info {
+    flex: 1;
+  }
+
+  .completed-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .completed-date {
+    font-size: 12px;
+    color: var(--text-tertiary);
+  }
+
+  .completed-savings {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--accent-green);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ══════════════════════════════════════════════════════════════
+     MOBILE LAYOUT
+     ══════════════════════════════════════════════════════════════ */
+
+  .mobile-header {
+    display: none;
+  }
+
+  .mobile-nav {
+    display: none;
+  }
+
+  @media (max-width: 1024px) {
+    .dashboard-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .secondary-column {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .sidebar {
+      display: none;
+    }
+
+    .main-content {
+      margin-left: 0;
+    }
+
+    .main-header {
+      display: none;
+    }
+
+    .mobile-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 52px 20px 16px;
+      position: sticky;
+      top: 0;
+      background: var(--bg-primary);
+      z-index: 50;
+    }
+
+    .mobile-title {
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .mobile-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent-purple) 0%, var(--accent-blue) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .main-body {
+      padding: 0 20px 100px;
+    }
+
+    .dashboard-grid {
+      gap: 16px;
+    }
+
+    .primary-column,
+    .secondary-column {
+      gap: 16px;
+    }
+
+    .secondary-column {
+      grid-template-columns: 1fr;
+    }
+
+    .card-header {
+      padding: 16px 20px;
+    }
+
+    .card-body {
+      padding: 20px;
+    }
+
+    .savings-amount {
+      font-size: 36px;
+    }
+
+    .savings-chart {
+      display: none;
+    }
+
+    .savings-breakdown {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .breakdown-value {
+      font-size: 18px;
+    }
+
+    .action-item {
+      padding: 16px 20px;
+    }
+
+    .action-icon {
+      width: 40px;
+      height: 40px;
+      font-size: 20px;
+    }
+
+    .accounts-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .mobile-nav {
+      display: flex;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 12px 20px calc(12px + env(safe-area-inset-bottom, 0px));
+      background: rgba(10,10,15,0.95);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid var(--border);
+      justify-content: space-around;
+      z-index: 100;
+    }
+
+    .mobile-nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      color: var(--text-tertiary);
+      text-decoration: none;
+      padding: 4px 16px;
+    }
+
+    .mobile-nav-item.active {
+      color: var(--accent-blue);
+    }
+
+    .mobile-nav-item svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .mobile-nav-item span {
+      font-size: 10px;
+      font-weight: 500;
+    }
+  }
+
+  @media (max-width: 400px) {
+    .savings-breakdown {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .breakdown-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      text-align: left;
+    }
+
+    .breakdown-label {
+      order: -1;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Sidebar (Desktop) -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-icon">H</div>
+        <div class="logo-text">Hiro</div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Overview</div>
+          <a class="nav-item" href="#">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+              <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+            </svg>
+            Dashboard
+          </a>
+          <a class="nav-item" href="#">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+            Ask Hiro
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Tax Planning</div>
+          <a class="nav-item active" href="#">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 21V9l-4 4V21h4zM15 21V5l-4 4v12h4zM21 21V13l-4 4v4h4z"/>
+            </svg>
+            Tax Dashboard
+            <span class="nav-badge">3</span>
+          </a>
+          <a class="nav-item" href="#">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+            Projections
+          </a>
+          <a class="nav-item" href="#">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+            Tax Calendar
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Accounts</div>
+          <a class="nav-item" href="#">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+              <line x1="1" y1="10" x2="23" y2="10"/>
+            </svg>
+            All Accounts
+          </a>
+          <a class="nav-item" href="#">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+            Transactions
+          </a>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-card">
+          <div class="user-avatar">EB</div>
+          <div class="user-info">
+            <div class="user-name">Ethan Bloch</div>
+            <div class="user-email">ethan@example.com</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Desktop Header -->
+      <header class="main-header">
+        <div>
+          <h1 class="main-title">Tax Planning</h1>
+          <p class="main-subtitle">2026 Tax Year • 283 days remaining</p>
+        </div>
+        <div class="header-actions">
+          <button class="header-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            Export Report
+          </button>
+          <button class="header-btn primary">+ Connect Account</button>
+        </div>
+      </header>
+
+      <!-- Mobile Header -->
+      <header class="mobile-header">
+        <h1 class="mobile-title">Tax Planning</h1>
+        <div class="mobile-avatar">EB</div>
+      </header>
+
+      <div class="main-body">
+        <div class="dashboard-grid">
+          <!-- Primary Column -->
+          <div class="primary-column">
+            <!-- Savings Summary -->
+            <div class="card savings-card">
+              <div class="card-body">
+                <div class="savings-hero">
+                  <div class="savings-main">
+                    <div class="savings-label">✨ Projected Tax Savings</div>
+                    <div class="savings-amount">$7,240</div>
+                    <div class="savings-subtext">You're on track to save <strong>$7,240</strong> vs. doing nothing</div>
+                  </div>
+                  <div class="savings-chart">
+                    <svg viewBox="0 0 120 120" fill="none">
+                      <circle cx="60" cy="60" r="50" stroke="rgba(255,255,255,0.1)" stroke-width="12"/>
+                      <circle cx="60" cy="60" r="50" stroke="url(#gradient)" stroke-width="12" 
+                              stroke-dasharray="314" stroke-dashoffset="94" stroke-linecap="round"
+                              transform="rotate(-90 60 60)"/>
+                      <defs>
+                        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                          <stop offset="0%" stop-color="#34d399"/>
+                          <stop offset="100%" stop-color="#4a9eff"/>
+                        </linearGradient>
+                      </defs>
+                      <text x="60" y="56" text-anchor="middle" fill="#f0f0f5" font-size="18" font-weight="700" font-family="JetBrains Mono">70%</text>
+                      <text x="60" y="72" text-anchor="middle" fill="#8888a0" font-size="10" font-family="Inter">captured</text>
+                    </svg>
+                  </div>
+                </div>
+                <div class="savings-breakdown">
+                  <div class="breakdown-item">
+                    <div class="breakdown-value green">$2,840</div>
+                    <div class="breakdown-label">Captured</div>
+                  </div>
+                  <div class="breakdown-item">
+                    <div class="breakdown-value amber">$4,400</div>
+                    <div class="breakdown-label">Pending Actions</div>
+                  </div>
+                  <div class="breakdown-item">
+                    <div class="breakdown-value blue">$12,400</div>
+                    <div class="breakdown-label">Potential (Stretch)</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Recommended Actions -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">Recommended Actions</div>
+                <span class="card-badge warning">3 pending</span>
+              </div>
+
+              <!-- Roth Conversion -->
+              <div class="action-item">
+                <div class="action-icon roth">🔄</div>
+                <div class="action-content">
+                  <div class="action-header">
+                    <div class="action-title">Convert $18,400 to Roth IRA</div>
+                    <div class="action-value">+$4,200</div>
+                  </div>
+                  <div class="action-description">
+                    You're $18,400 below the 32% bracket ceiling. Converting now saves $4,200 in lifetime taxes vs. waiting until RMDs force withdrawals at higher rates.
+                  </div>
+                  <div class="action-meta">
+                    <div class="action-deadline">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/>
+                      </svg>
+                      Before Dec 31, 2026
+                    </div>
+                    <button class="action-btn">Review →</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Tax Loss Harvest -->
+              <div class="action-item">
+                <div class="action-icon tlh">📉</div>
+                <div class="action-content">
+                  <div class="action-header">
+                    <div class="action-title">Harvest $3,500 Loss in VXUS</div>
+                    <div class="action-value">+$840</div>
+                  </div>
+                  <div class="action-description">
+                    Your international fund is down 12%. Harvesting this loss offsets gains from your RSU sale last month. We'll swap to a similar ETF to maintain exposure.
+                  </div>
+                  <div class="action-meta">
+                    <div class="action-deadline critical">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/>
+                      </svg>
+                      Review within 5 days
+                    </div>
+                    <button class="action-btn">Execute →</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- RSU Planning -->
+              <div class="action-item">
+                <div class="action-icon rsu">📊</div>
+                <div class="action-content">
+                  <div class="action-header">
+                    <div class="action-title">RSU Vest Strategy — Apr 15</div>
+                    <div class="action-value">~$2,100</div>
+                  </div>
+                  <div class="action-description">
+                    450 shares vesting at ~$142. Selling immediately triggers $15,200 ordinary income. Consider holding 180 shares for long-term capital gains treatment.
+                  </div>
+                  <div class="action-meta">
+                    <div class="action-deadline urgent">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/>
+                      </svg>
+                      Decide by Apr 12
+                    </div>
+                    <button class="action-btn">View Analysis</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Connected Accounts -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">Tracked Accounts</div>
+                <span class="card-badge success">4 synced</span>
+              </div>
+              <div class="card-body">
+                <div class="accounts-grid">
+                  <div class="account-card">
+                    <div class="account-top">
+                      <div class="account-icon">🏦</div>
+                      <span class="account-type-badge pretax">Pre-tax</span>
+                    </div>
+                    <div class="account-name">Fidelity 401(k)</div>
+                    <div class="account-balance">$312,450</div>
+                    <div class="account-change positive">+$18,200 YTD</div>
+                  </div>
+
+                  <div class="account-card">
+                    <div class="account-top">
+                      <div class="account-icon">🟣</div>
+                      <span class="account-type-badge roth">Roth</span>
+                    </div>
+                    <div class="account-name">Vanguard Roth IRA</div>
+                    <div class="account-balance">$87,320</div>
+                    <div class="account-change positive">+$4,100 YTD</div>
+                  </div>
+
+                  <div class="account-card">
+                    <div class="account-top">
+                      <div class="account-icon">📈</div>
+                      <span class="account-type-badge taxable">Taxable</span>
+                    </div>
+                    <div class="account-name">Schwab Brokerage</div>
+                    <div class="account-balance">$156,800</div>
+                    <div class="account-change negative">-$2,100 YTD</div>
+                  </div>
+
+                  <div class="account-card">
+                    <div class="account-top">
+                      <div class="account-icon">💼</div>
+                      <span class="account-type-badge equity">Equity</span>
+                    </div>
+                    <div class="account-name">Company RSUs</div>
+                    <div class="account-balance">$64,000</div>
+                    <div class="account-change positive">450 unvested</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Secondary Column -->
+          <div class="secondary-column">
+            <!-- Tax Bracket -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">Tax Bracket</div>
+              </div>
+              <div class="card-body">
+                <div class="bracket-visual">
+                  <div class="bracket-header">
+                    <div class="bracket-current">Federal + CA State</div>
+                    <div class="bracket-rate">32% <span>+ 9.3%</span></div>
+                  </div>
+                  <div class="bracket-bar-container">
+                    <div class="bracket-bar">
+                      <div class="bracket-segment filled" style="width: 72%;">
+                        <div class="bracket-marker"></div>
+                      </div>
+                      <div class="bracket-segment empty" style="width: 28%;"></div>
+                    </div>
+                  </div>
+                  <div class="bracket-labels">
+                    <span>$231,250</span>
+                    <span>$285,600 (You)</span>
+                    <span>$394,600</span>
+                  </div>
+                </div>
+                <div class="bracket-insight">
+                  💡 <strong>$18,400 of headroom</strong> before hitting the 35% bracket. Ideal for Roth conversions or accelerating income.
+                </div>
+              </div>
+            </div>
+
+            <!-- Year Progress -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">Tax Year Timeline</div>
+              </div>
+              <div class="card-body">
+                <div class="year-header">
+                  <div class="year-info">2026 Progress</div>
+                  <div class="year-remaining">283 days left</div>
+                </div>
+                <div class="year-bar">
+                  <div class="year-fill"></div>
+                </div>
+                <div class="milestones-list">
+                  <div class="milestone complete">
+                    <div class="milestone-icon">✓</div>
+                    <div class="milestone-content">
+                      <div class="milestone-title">Q1 Estimated Tax</div>
+                      <div class="milestone-date">Completed Mar 15</div>
+                    </div>
+                  </div>
+                  <div class="milestone upcoming">
+                    <div class="milestone-icon">⏱</div>
+                    <div class="milestone-content">
+                      <div class="milestone-title">RSU Vest — 450 shares</div>
+                      <div class="milestone-date">Apr 15, 2026</div>
+                    </div>
+                  </div>
+                  <div class="milestone future">
+                    <div class="milestone-icon">○</div>
+                    <div class="milestone-content">
+                      <div class="milestone-title">Q2 Estimated Tax</div>
+                      <div class="milestone-date">Jun 15, 2026</div>
+                    </div>
+                  </div>
+                  <div class="milestone future">
+                    <div class="milestone-icon">○</div>
+                    <div class="milestone-content">
+                      <div class="milestone-title">Year-End Deadline</div>
+                      <div class="milestone-date">Dec 31, 2026</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Completed Actions -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">Captured This Year</div>
+                <span class="card-badge success">$2,840</span>
+              </div>
+              <div class="card-body">
+                <div class="completed-item">
+                  <div class="completed-check">✓</div>
+                  <div class="completed-info">
+                    <div class="completed-title">Backdoor Roth Contribution</div>
+                    <div class="completed-date">Jan 15, 2026</div>
+                  </div>
+                  <div class="completed-savings">+$1,540</div>
+                </div>
+                <div class="completed-item">
+                  <div class="completed-check">✓</div>
+                  <div class="completed-info">
+                    <div class="completed-title">Tax-Loss Harvest — AAPL</div>
+                    <div class="completed-date">Feb 28, 2026</div>
+                  </div>
+                  <div class="completed-savings">+$720</div>
+                </div>
+                <div class="completed-item">
+                  <div class="completed-check">✓</div>
+                  <div class="completed-info">
+                    <div class="completed-title">HSA Contribution Maxed</div>
+                    <div class="completed-date">Mar 1, 2026</div>
+                  </div>
+                  <div class="completed-savings">+$580</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile Navigation -->
+      <nav class="mobile-nav">
+        <a href="#" class="mobile-nav-item active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21V9l-4 4V21h4zM15 21V5l-4 4v12h4zM21 21V13l-4 4v4h4z"/>
+          </svg>
+          <span>Tax</span>
+        </a>
+        <a href="#" class="mobile-nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+          <span>Calendar</span>
+        </a>
+        <a href="#" class="mobile-nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+          <span>Chat</span>
+        </a>
+        <a href="#" class="mobile-nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+          <span>Settings</span>
+        </a>
+      </nav>
+    </main>
+  </div>
+</body>
+</html>
